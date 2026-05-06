@@ -1,0 +1,1457 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cru Ledger v3</title><style>
+:root{color-scheme:light;--nv:#1a2744;--bl:#2563eb;--lb:#eff6ff;--tl:#0d9488;--gn:#16a34a;--rd:#dc2626;--am:#d97706;--gy:#6b7280;--lg:#f3f4f6;--bd:#e5e7eb;--tx:#111827}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;background:#f9fafb;color:var(--tx);display:flex;height:100vh;overflow:hidden}
+#sb{width:220px;min-width:220px;background:var(--nv);display:flex;flex-direction:column;overflow-y:auto}
+.logo{padding:13px 13px 9px;font-size:17px;font-weight:800;color:#fff;border-bottom:1px solid rgba(255,255,255,.1)}.logo span{color:#60a5fa}.logo small{display:block;font-size:9px;font-weight:400;color:rgba(255,255,255,.4);letter-spacing:.5px;margin-top:1px}
+.si{display:flex;align-items:center;gap:6px;padding:6px 13px;cursor:pointer;color:rgba(255,255,255,.75);font-size:12px;transition:background .1s}
+.si:hover{background:rgba(255,255,255,.08);color:#fff}.si.on{background:rgba(96,165,250,.2);color:#93c5fd;font-weight:600}
+.si-sub{padding-left:26px;font-size:11.5px;color:rgba(255,255,255,.6)}.si-sub:hover{color:#fff}
+.sic{width:15px;text-align:center;font-size:12px}.sbg{margin-left:auto;background:var(--rd);color:#fff;font-size:9.5px;padding:1px 4px;border-radius:9px;line-height:13px}.sbg.a{background:var(--am)}
+/* collapsible section headers */
+.ss-hd{display:flex;align-items:center;justify-content:space-between;padding:8px 13px 5px;cursor:pointer;color:rgba(255,255,255,.5);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;transition:color .1s;border-top:1px solid rgba(255,255,255,.06);margin-top:2px}
+.ss-hd:hover{color:rgba(255,255,255,.8)}.ss-hd.open{color:rgba(255,255,255,.75)}.ss-arr{font-size:10px;transition:transform .2s}.ss-arr.up{transform:rotate(180deg)}
+.sec-body{overflow:hidden;transition:max-height .25s ease}
+/* rq always visible */
+.si-rq{background:rgba(96,165,250,.12);border-left:3px solid #60a5fa;padding-left:10px}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#tb{height:48px;background:#fff;border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
+#tbt{font-size:13.5px;font-weight:700;color:var(--nv);flex:1}
+.tg{display:flex;border:1px solid var(--bd);border-radius:5px;overflow:hidden}
+.tb2{padding:4px 10px;font-size:11.5px;cursor:pointer;background:#fff;border:none;color:var(--gy)}.tb2.on{background:var(--nv);color:#fff;font-weight:600}
+.av{width:27px;height:27px;border-radius:50%;background:var(--bl);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+#ct{flex:1;overflow-y:auto;padding:16px}
+.ph h2{font-size:16px;font-weight:700;color:var(--nv)}.ph p{color:var(--gy);font-size:11.5px;margin-top:2px}.ph{margin-bottom:14px}
+.kr{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px;margin-bottom:14px}
+.kp{background:#fff;border:1px solid var(--bd);border-radius:6px;padding:11px;cursor:pointer}.kp:hover{box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.kl{font-size:10px;color:var(--gy);text-transform:uppercase;letter-spacing:.4px}.kv{font-size:20px;font-weight:700;margin:3px 0;color:var(--nv)}.ks{font-size:11px;color:var(--gy)}
+.ks.up{color:var(--gn)}.ks.dn{color:var(--rd)}.ks.wn{color:var(--am)}.kp.hi{border-color:var(--am);background:#fffbeb}.kp.hi .kv{color:var(--am)}
+.cd{background:#fff;border:1px solid var(--bd);border-radius:6px;margin-bottom:11px;overflow:hidden}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bd);font-weight:600;font-size:12px;color:var(--nv)}
+.cb{padding:11px 13px}.ax{display:flex;gap:5px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10px;text-transform:uppercase;color:var(--gy);padding:6px 8px;border-bottom:2px solid var(--bd);letter-spacing:.3px}
+td{padding:7px 8px;border-bottom:1px solid var(--bd);font-size:11.5px;vertical-align:middle}
+tr:last-child td{border-bottom:none}.cl:hover td{background:var(--lg);cursor:pointer}
+.b{display:inline-block;padding:2px 6px;border-radius:9px;font-size:10px;font-weight:600}
+.bg{background:#dcfce7;color:#15803d}.br{background:#fee2e2;color:#b91c1c}.ba{background:#fef3c7;color:#92400e}
+.bb{background:#dbeafe;color:#1e40af}.bx{background:#f3f4f6;color:#374151}.bt{background:#ccfbf1;color:#0f766e}.bp{background:#ede9fe;color:#6d28d9}
+.btn{display:inline-flex;align-items:center;gap:3px;padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:#fff;color:var(--tx)}
+.btn:hover{background:var(--lg)}.btn.p{background:var(--bl);color:#fff;border-color:var(--bl)}.btn.t{background:var(--tl);color:#fff;border-color:var(--tl)}
+.btn.g{background:var(--gn);color:#fff;border-color:var(--gn)}.btn.r{background:var(--rd);color:#fff;border-color:var(--rd)}
+.sl{color:var(--bl);cursor:pointer;text-decoration:underline;font-size:10.5px}
+.ai{display:inline-flex;align-items:center;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border-radius:8px;font-size:9.5px;padding:1px 5px;font-weight:600}
+.db{background:var(--nv);color:#fff;padding:11px 14px;border-radius:6px 6px 0 0}
+.dbg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px;margin-top:7px}
+.dbi label{font-size:9.5px;opacity:.5;display:block;text-transform:uppercase}.dbi span{font-size:14px;font-weight:700}
+.eb{background:var(--lb);border:2px solid var(--bl);border-radius:6px;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.eb label{font-size:11.5px;color:var(--gy)}.eb span{font-size:20px;font-weight:800;color:var(--nv)}
+.bk{color:var(--bl);cursor:pointer;font-size:11.5px;margin-bottom:9px;display:inline-flex;align-items:center;gap:2px}
+.al{border-radius:5px;padding:8px 12px;font-size:11.5px;margin-bottom:10px}
+.al.i{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}.al.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}.al.w{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}.fg3{grid-template-columns:1fr 1fr 1fr}
+.fl{display:flex;flex-direction:column;gap:2px}.fl label{font-size:10px;color:var(--gy);text-transform:uppercase;letter-spacing:.3px}
+.mi{border:1px solid var(--bd);border-radius:4px;padding:5px 7px;font-size:11.5px;background:#fafafa}.mi.on{background:#fff;border-color:var(--bl)}
+.conn-card{border:1px solid var(--bd);border-radius:7px;padding:12px 14px;background:#fff;display:flex;align-items:center;justify-content:space-between}
+.conn-card:hover{box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.conn-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:10px;flex-shrink:0}
+/* rq row colors */
+.rq-ar{border-left:3px solid var(--bl)}.rq-ap{border-left:3px solid var(--am)}.rq-bk{border-left:3px solid var(--tl)}
+/* toggle pill */
+.tog-wrap{display:flex;background:var(--lg);border-radius:6px;padding:2px;gap:2px;margin-bottom:12px}
+.tog-opt{flex:1;text-align:center;padding:5px 0;border-radius:4px;font-size:11.5px;cursor:pointer;color:var(--gy);transition:all .15s}
+.tog-opt.on{background:#fff;color:var(--nv);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.md{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px}
+.md.m{background:var(--gn)}.md.u{background:var(--rd)}.md.rv{background:var(--am)}
+</style></head><body>
+
+<nav id="sb">
+<div class="logo">Cru <span>Ledger</span><small>Construction Accounting Platform</small></div>
+
+<div class="si on" onclick="go(this,'dash')" style="border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:2px"><span class="sic">⊞</span><strong>Dashboard</strong></div>
+
+<!-- DATA INPUTS -->
+<div class="ss-hd open" id="hd-inputs" onclick="toggleSec('inputs')"><span>📥 Data Inputs</span><span class="ss-arr up" id="arr-inputs">▾</span></div>
+<div class="sec-body" id="sec-inputs">
+  <div style="padding:3px 8px 3px">
+    <div class="si si-rq" onclick="go(this,'rq')"><span class="sic">🤖</span>AI Review Queue<span class="sbg a">3</span></div>
+  </div>
+  <div class="si si-sub" onclick="go(this,'connectors')"><span class="sic">🔌</span>Data Connectors</div>
+  <div class="si si-sub" onclick="go(this,'je')"><span class="sic">✎</span>Journal Entries</div>
+</div>
+
+<!-- ACCOUNTS PAYABLE -->
+<div class="ss-hd open" id="hd-apar" onclick="toggleSec('apar')"><span>💳 Payables</span><span class="ss-arr up" id="arr-apar">▾</span></div>
+<div class="sec-body" id="sec-apar">
+  <div class="si si-sub" onclick="go(this,'ap')"><span class="sic">↓</span>Accounts Payable<span class="sbg">5</span></div>
+  <div class="si si-sub" onclick="go(this,'pos')"><span class="sic">📦</span>POs &amp; Subcontracts</div>
+  <div class="si si-sub" onclick="go(this,'pay')"><span class="sic">💰</span>Payroll</div>
+</div>
+
+<!-- ACCOUNTING -->
+<div class="ss-hd open" id="hd-acct" onclick="toggleSec('acct')"><span>📒 Accounting</span><span class="ss-arr up" id="arr-acct">▾</span></div>
+<div class="sec-body" id="sec-acct">
+  <div class="si si-sub" onclick="go(this,'ar')"><span class="sic">↑</span>Accounts Receivable<span class="sbg">3</span></div>
+  <div class="si si-sub" onclick="go(this,'bank')"><span class="sic">🏦</span>Bank Transactions<span class="sbg a">4</span></div>
+  <div class="si si-sub" onclick="go(this,'gl')"><span class="sic">≡</span>General Ledger</div>
+  <div class="si si-sub" onclick="go(this,'coa')"><span class="sic">☰</span>Chart of Accounts</div>
+</div>
+
+<!-- FP&A / JOB MANAGEMENT -->
+<div class="ss-hd open" id="hd-fpa" onclick="toggleSec('fpa')"><span>📊 FP&amp;A / Job Mgmt</span><span class="ss-arr up" id="arr-fpa">▾</span></div>
+<div class="sec-body" id="sec-fpa">
+  <div class="si si-sub" onclick="go(this,'jwip')"><span class="sic">🏗</span>WIP</div>
+  <div class="si si-sub" onclick="go(this,'co')"><span class="sic">↔</span>Change Orders</div>
+  <div class="si si-sub" onclick="go(this,'ret')"><span class="sic">🔒</span>Retainage Tracker</div>
+  <div class="si si-sub" onclick="go(this,'eva')"><span class="sic">📐</span>Est. vs. Actuals</div>
+</div>
+
+<!-- REPORTS -->
+<div class="ss-hd open" id="hd-reports" onclick="toggleSec('reports')"><span>📊 Reports</span><span class="ss-arr up" id="arr-reports">▾</span></div>
+<div class="sec-body" id="sec-reports">
+  <div class="si si-sub" onclick="go(this,'reports')"><span class="sic">📊</span>Reports</div>
+</div>
+
+<!-- COMPLIANCE HUB -->
+<div class="ss-hd open" id="hd-comp" onclick="toggleSec('comp')"><span>🛡 Compliance Hub</span><span class="ss-arr up" id="arr-comp">▾</span></div>
+<div class="sec-body" id="sec-comp">
+  <div class="si si-sub" onclick="go(this,'projects')"><span class="sic">🏗</span>Project Register</div>
+  <div class="si si-sub" onclick="go(this,'vendors')"><span class="sic">🏢</span>Vendor Master</div>
+  <div class="si si-sub" onclick="go(this,'coh')"><span class="sic">🛡</span>COI Tracker<span class="sbg a">2</span></div>
+  <div class="si si-sub" onclick="go(this,'cpr')"><span class="sic">📄</span>Certified Payroll</div>
+</div>
+
+
+
+<div style="margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:4px 0">
+  <div class="si" onclick="go(this,'set')"><span class="sic">⚙</span>Settings</div>
+</div>
+</nav>
+
+<div id="main">
+<div id="tb">
+  <div id="tbt">Dashboard</div>
+  <div class="tg"><button class="tb2 on" onclick="setR(this)">Owner</button><button class="tb2" onclick="setR(this)">Bookkeeper</button></div>
+  <div class="av">RM</div>
+</div>
+<div id="ct"></div>
+</div>
+
+<script>
+var S={};
+/* helpers */
+function b(t,c){return'<span class="b b'+c+'">'+t+'</span>';}
+function btn(t,c){return'<button class="btn'+(c?' '+c:'')+'">'+t+'</button>';}
+function navbtn(t,c,s){return'<button class="btn'+(c?' '+c:'')+'" onclick="nav(\''+s+'\')">'+t+'</button>';}
+function navsl(t,s){return'<span class="sl" onclick="nav(\''+s+'\')">'+t+'</span>';}
+function glsl(code){return'<span class="sl" onclick="glD(\''+code+'\')">'+code+'</span>';}
+function al(t,c){return'<div class="al '+c+'">'+t+'</div>';}
+function ph(t,p){return'<div class="ph"><h2>'+t+'</h2><p>'+p+'</p></div>';}
+function kpi(l,v,s,c){var cls='kp'+(c?' '+c:'');return'<div class="'+cls+'"><div class="kl">'+l+'</div><div class="kv">'+v+'</div>'+(s?'<div class="ks '+s[0]+'">'+s[1]+'</div>':'')+'</div>';}
+function krow(a){return'<div class="kr">'+a.join('')+'</div>';}
+function tr(cs,cls,oc){return'<tr'+(cls?' class="'+cls+'"':'')+(oc?' onclick="'+oc+'"':'')+'>'+cs.map(function(x){return'<td>'+x+'</td>';}).join('')+'</tr>';}
+var filterIcon='<svg style="width:9px;height:9px;margin-left:4px;opacity:.35;cursor:pointer;vertical-align:middle;flex-shrink:0" viewBox="0 0 10 10" title="Filter"><path d="M0 1.5h10L6.2 5.8V9L3.8 7.8V5.8L0 1.5z" fill="currentColor"/></svg>';
+function tbl(hs,rs){return'<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table><tr>'+hs.map(function(h){return'<th style="white-space:nowrap">'+h+filterIcon+'</th>';}).join('')+'</tr>'+rs.join('')+'</table></div>';}
+function cardT(ti,ac,body){return'<div class="cd"><div class="ch">'+ti+(ac?'<div class="ax">'+ac+'</div>':'')+' </div>'+body+'</div>';}
+function card(ti,ac,body){return cardT(ti,ac,'<div class="cb">'+body+'</div>');}
+function two(a,b_){return'<div class="two">'+a+b_+'</div>';}
+function three(a,b_,c_){return'<div class="three">'+a+b_+c_+'</div>';}
+function fg(fs,c){var cls='fg'+(c?' '+c:'');return'<div class="'+cls+'">'+fs.map(function(f){return'<div class="fl"><label>'+f[0]+'</label><div class="mi'+(f[2]?' on':'')+'">'+f[1]+'</div></div>';}).join('')+'</div>';}
+function nav(s){var e=document.querySelector('[onclick="go(this,\''+s+'\')"]');go(e,s);}
+function setR(b){document.querySelectorAll('.tg')[0].querySelectorAll('.tb2').forEach(function(x){x.classList.remove('on');});b.classList.add('on');}
+
+/* sidebar collapse */
+function toggleSec(name){
+  var body=document.getElementById('sec-'+name);
+  var arr=document.getElementById('arr-'+name);
+  var hd=document.getElementById('hd-'+name);
+  var open=body.style.maxHeight!=='0px'&&body.style.maxHeight!=='';
+  if(open){body.style.maxHeight='0px';arr.classList.remove('up');hd.classList.remove('open');}
+  else{body.style.maxHeight='600px';arr.classList.add('up');hd.classList.add('open');}
+}
+/* init all sections open */
+['inputs','apar','acct','fpa','reports','comp'].forEach(function(s){
+  var el=document.getElementById('sec-'+s);
+  if(el)el.style.maxHeight='600px';
+});
+
+/* nav */
+var titles={dash:'Dashboard',rq:'AI Review Queue',reports:'Reports',vendors:'Vendor Master',projects:'Project Register',email:'Email / Invoice Ingestion',bank:'Bank Transactions',connectors:'Data Connectors',pay:'Payroll',ar:'Accounts Receivable',aia:'AIA Pay Applications',ap:'Accounts Payable',pos:'POs & Subcontracts',je:'Journal Entries',gl:'General Ledger',coa:'Chart of Accounts',pl:'P&L',bs:'Balance Sheet',cf:'Cash Flow',jwip:'Jobs & WIP',co:'Change Orders',ret:'Retainage Tracker',eva:'Est. vs. Actuals',rag:'Retainage Aging',coh:'COI Tracker',sc:'Sub Compliance',cpr:'Certified Payroll',set:'Settings'};
+function go(el,name){
+  if(!S[name])return;
+  document.querySelectorAll('.si').forEach(function(i){i.classList.remove('on');});
+  if(el)el.classList.add('on');
+  document.getElementById('tbt').textContent=titles[name]||name;
+  try{document.getElementById('ct').innerHTML=S[name]();}
+  catch(e){document.getElementById('ct').innerHTML='<div class="al w">Screen error: '+e.message+'</div>';}
+  document.getElementById('ct').scrollTop=0;
+}
+
+/* ── UPDATED GL ACCOUNTS (Tommy's COA notes) ─────────────── */
+var glA=[
+  {c:'1000',n:'Cash — Operating (Chase ••4482)',t:'Asset',o:88300,d:142000,cr:89200},
+  {c:'1010',n:'Cash — Payroll (Chase ••7741)',t:'Asset',o:42000,d:24100,cr:24100},
+  {c:'1020',n:'Cash — Savings',t:'Asset',o:15000,d:0,cr:0},
+  {c:'1100',n:'Accounts Receivable',t:'Asset',o:248000,d:312400,cr:28000},
+  {c:'1150',n:'Retainage Receivable',t:'Asset',o:94800,d:127600,cr:0},
+  {c:'1200',n:'Prepaid Expenses',t:'Asset',o:12000,d:8000,cr:4200},
+  {c:'1300',n:'Revenue in Excess of Billings (WIP)',t:'Asset',o:0,d:18400,cr:0},
+  {c:'1500',n:'Equipment',t:'Asset',o:320000,d:45000,cr:18000},
+  {c:'1510',n:'Accum. Depreciation',t:'Asset',o:-88000,d:0,cr:12000},
+  {c:'2000',n:'Accounts Payable',t:'Liability',o:142000,d:68000,cr:198750},
+  {c:'2100',n:'Wages Payable',t:'Liability',o:14000,d:14000,cr:16800},
+  {c:'2110',n:'Payroll Taxes Payable',t:'Liability',o:2800,d:2800,cr:3360},
+  {c:'2120',n:'Employee Benefits Payable',t:'Liability',o:1600,d:1600,cr:1940},
+  {c:'2300',n:'Billings in Excess of Revenue (WIP)',t:'Liability',o:0,d:0,cr:41200},
+  {c:'2500',n:'Line of Credit',t:'Liability',o:150000,d:50000,cr:0},
+  {c:'2510',n:'Equipment Loans',t:'Liability',o:48000,d:12000,cr:0},
+  {c:'3000',n:'Owner Equity',t:'Equity',o:480000,d:0,cr:0},
+  {c:'3100',n:'Retained Earnings',t:'Equity',o:112000,d:0,cr:0},
+  {c:'4000',n:'Contract Revenue (incl. Change Orders)',t:'Revenue',o:0,d:0,cr:650500},
+  {c:'4200',n:'WIP Revenue Adjustment',t:'Revenue',o:0,d:41200,cr:18400},
+  {c:'5000',n:'Direct Labor',t:'COGS',o:0,d:148000,cr:0},
+  {c:'5100',n:'Materials',t:'COGS',o:0,d:224000,cr:0},
+  {c:'5200',n:'Subcontractors',t:'COGS',o:0,d:98000,cr:0},
+  {c:'5300',n:'Equipment Costs',t:'COGS',o:0,d:28000,cr:0},
+  {c:'5400',n:'Insurance — Job (COGS)',t:'COGS',o:0,d:8250,cr:0},
+  {c:'5500',n:'Other Job Costs',t:'COGS',o:0,d:4200,cr:0},
+  {c:'6000',n:'General & Admin',t:'Expense',o:0,d:42000,cr:0}
+];
+var glT={
+  '1000':[['Apr 28','JE-1140','Payroll Wk 17','All',0,24100],['Apr 25','JE-1135','Vendor Pmt Apex','Metro',0,38400],['Apr 22','JE-1130','GC Pmt Harbor','Harbor',62000,0]],
+  '1100':[['Apr 25','JE-1139','AIA App #7','Metro',94500,0],['Apr 22','JE-1131','Pmt Harbor','Harbor',0,62000],['Apr 12','JE-1120','INV-2198','Harbor',62000,0]],
+  '1150':[['Apr 25','JE-1138','Ret. App #7 (net of AR)','Metro',7560,0],['Apr 12','JE-1121','Ret. App #6','Metro',8400,0]],
+  '2000':[['Apr 28','JE-1142','Apex Steel #2241','Metro',0,18400],['Apr 27','JE-1141','City Electric #811','Harbor',0,6200],['Apr 25','JE-1135','Vendor Pmt Apex','Metro',38400,0]],
+  '4000':[['Apr 25','JE-1139','AIA App #7 Rev','Metro',0,94500],['Apr 12','JE-1120','Harbor App #4','Harbor',0,62000]],
+  '5000':[['Apr 26','JE-1140','Labor Wk 17','All',24100,0],['Apr 19','JE-1132','Labor Wk 16','All',22800,0]],
+  '5100':[['Apr 28','JE-1142','Apex Steel #2241','Metro',18400,0],['Apr 20','JE-1129','Concrete Metro','Metro',42000,0]],
+  '6000':[['Apr 28','JE-1144','SafetyFirst Ins.','All',8250,0],['Apr 1','JE-1108','Office Rent','Overhead',4200,0]]
+};
+function fm(n){return(n<0?'(':'')+'$'+Math.abs(n).toLocaleString()+(n<0?')':'');}
+function f$(n){return n?'$'+n.toLocaleString():'—';}
+
+function glD(code){
+  var a=glA.find(function(x){return x.c===code;});
+  if(!a)return;
+  var txns=glT[code]||[];
+  var e=a.o+a.d-a.cr;var rb=a.o;
+  var rows=txns.map(function(tx){
+    rb+=tx[4]-tx[5];
+    return'<tr><td>'+tx[0]+'</td><td>'+tx[1]+'</td><td>'+tx[2]+'</td><td>'+tx[3]+'</td>'+
+      '<td style="color:var(--bl)">'+f$(tx[4])+'</td><td style="color:var(--rd)">'+f$(tx[5])+'</td>'+
+      '<td><strong>'+fm(rb)+'</strong></td></tr>';
+  }).join('');
+  document.getElementById('ct').innerHTML=
+    '<span class="bk" onclick="nav(\'gl\')">← Back to General Ledger</span>'+
+    '<div class="cd"><div class="db">'+
+    '<div style="font-size:13px;font-weight:700">'+a.c+' — '+a.n+'</div>'+
+    '<div style="font-size:10px;opacity:.5;margin:1px 0 6px">'+a.t+'</div>'+
+    '<div class="dbg"><div class="dbi"><label>Opening</label><span>'+fm(a.o)+'</span></div>'+
+    '<div class="dbi"><label>Total Debits</label><span>'+fm(a.d)+'</span></div>'+
+    '<div class="dbi"><label>Total Credits</label><span>'+fm(a.cr)+'</span></div>'+
+    '<div class="dbi"><label>Period</label><span>Apr 2026</span></div></div></div>'+
+    '<div style="padding:11px 13px">'+
+    '<div class="eb"><div><label>Ending Balance</label><div style="font-size:10px;color:var(--gy)">Opening + Debits − Credits</div></div><span>'+fm(e)+'</span></div>'+
+    '<table><tr><th>Date</th><th>Entry #</th><th>Description</th><th>Job</th><th>Debit</th><th>Credit</th><th>Running Bal.</th></tr>'+rows+'</table></div></div>';
+  document.getElementById('tbt').textContent=a.c+' — '+a.n;
+  document.querySelectorAll('.si').forEach(function(el){el.classList.remove('on');});
+}
+
+/* ══════════════════════════════════════════════════════
+   SCREENS
+══════════════════════════════════════════════════════ */
+
+/* ── DASHBOARD ───────────────────────────────────────── */
+/* ── VENDOR MASTER ───────────────────────────────────── */
+S.vendors=function(){
+  var vendors=[
+    {id:'VND-0022',name:'Apex Steel Supply',type:'Material Supplier',contact:'John Apex',email:'john@apexsteel.com',phone:'(212) 555-0101',terms:'Net 30',coi:b('✓ Current','g'),license:'—',ytd:'$224,000',gl:'5100',status:b('Active','g')},
+    {id:'VND-0044',name:'City Electric Co.',type:'Subcontractor',contact:'Maria City',email:'billing@cityelectric.com',phone:'(718) 555-0202',terms:'Net 30',coi:b('⚠ Expiring','a'),license:'EC-2024-8841',ytd:'$98,000',gl:'5200',status:b('Active','g')},
+    {id:'VND-0031',name:'FastConcrete LLC',type:'Subcontractor',contact:'Steve Fast',email:'steve@fastconcrete.com',phone:'(646) 555-0303',terms:'Net 45',coi:b('✓ Current','g'),license:'GC-2024-3321',ytd:'$61,800',gl:'5200',status:b('Active','g')},
+    {id:'VND-0067',name:'Steel Fab Inc.',type:'Subcontractor',contact:'Tom Steel',email:'tom@steelfab.com',phone:'(917) 555-0404',terms:'Net 30',coi:b('🚨 Expired','r'),license:'SC-2023-9910',ytd:'$44,000',gl:'5200',status:b('On Hold','r')},
+    {id:'VND-0055',name:'Diesel Pro',type:'Equipment / Fuel',contact:'Dan Diesel',email:'dieselpro@fuel.com',phone:'(347) 555-0505',terms:'Net 15',coi:b('✓ Current','g'),license:'—',ytd:'$5,100',gl:'5300',status:b('Active','g')},
+    {id:'VND-0018',name:'SafetyFirst Inc.',type:'Insurance / Service',contact:'Lisa Safe',email:'safetyfirst@ins.com',phone:'(212) 555-0606',terms:'Due on receipt',coi:b('N/A','x'),license:'—',ytd:'$8,250',gl:'5400',status:b('Active','g')},
+    {id:'VND-0033',name:'Samuels Plumbing',type:'Subcontractor',contact:'Sam Samuels',email:'samuelsplumbing@gmail.com',phone:'(718) 555-0707',terms:'Net 30',coi:b('Pending','a'),license:'Pending',ytd:'$11,800',gl:'5200',status:b('New','b')}
+  ];
+  return ph('Vendor Master','All vendors, subcontractors, and suppliers — unique vendor IDs prevent duplicate entries')+
+  al('Vendor numbers (VND-XXXX) are required on all transactions. New vendors must be created here before invoices can be posted.','i')+
+  krow([
+    kpi('Total Vendors','67','',''),
+    kpi('Active','61',['up','91%'],''),
+    kpi('On Hold','3',['wn','COI issues'],'hi'),
+    kpi('New (Pending)','3',['','Awaiting setup'],''),
+    kpi('Total YTD Spend','$453,000','',''),
+    kpi('COI Alerts','2',['wn','Expiring soon'],'hi')
+  ])+
+  cardT('Vendor Register',btn('+ New Vendor','p')+btn('Export',''),
+    tbl(['Vendor #','Vendor Name','Type','Contact','Email','Phone','Payment Terms','COI Status','License #','YTD Spend','GL','Status'],[
+      vendors.map(function(v){
+        return tr([v.id,'<strong>'+v.name+'</strong>',b(v.type==='Subcontractor'?'Sub':v.type==='Material Supplier'?'Materials':v.type==='Equipment / Fuel'?'Equipment':'Service',v.type==='Subcontractor'?'b':v.type==='Material Supplier'?'a':'x'),v.contact,'<span style="font-size:11px">'+v.email+'</span>',v.phone,v.terms,v.coi,v.license,v.ytd,glsl(v.gl),v.status]);
+      }).join('')
+    ],''))+
+  card('New Vendor Request','',
+    '<div class="al i" style="margin-bottom:10px">To prevent duplicate entries, new vendors are created centrally. All transactions require a valid VND-XXXX number.</div>'+
+    fg([['Vendor Name','',0],['Type','Subcontractor / Supplier / Service',0],['Contact Name','',0],['Email','',0],['Payment Terms','Net 30',0],['Tax ID / EIN','',0],['Default GL Account','',0],['COI Required','Yes / No',0]],'fg3')+
+    '<div style="margin-top:8px">'+btn('Submit Request','p')+'</div>');
+};
+
+/* ── PROJECT REGISTER ────────────────────────────────── */
+/* sub data keyed by job id */
+var subsByJob={
+  'JB-0001':[
+    {sub:'SUB-09',name:'Steel Fab Inc.',vnd:'VND-0067',trade:'Steel',contract:44000,retHeld:15400,coi:'r',coiLabel:'🚨 Expired',lienWaiver:'g',lwLabel:'Received',compliance:'r',compLabel:'Hold'},
+    {sub:'SUB-14',name:'City Electric Co.',vnd:'VND-0044',trade:'MEP',contract:22000,retHeld:1760,coi:'a',coiLabel:'⚠ Expiring',lienWaiver:'a',lwLabel:'Pending',compliance:'a',compLabel:'Action Req.'},
+    {sub:'SUB-15',name:'Skyline Glass',vnd:'VND-0071',trade:'Glazing',contract:15200,retHeld:1216,coi:'g',coiLabel:'✓ Current',lienWaiver:'g',lwLabel:'Received',compliance:'g',compLabel:'OK'}
+  ],
+  'JB-0012':[
+    {sub:'SUB-11',name:'City Electric Co.',vnd:'VND-0044',trade:'Electrical',contract:24200,retHeld:1210,coi:'a',coiLabel:'⚠ Expiring',lienWaiver:'a',lwLabel:'Pending',compliance:'a',compLabel:'Action Req.'},
+    {sub:'SUB-16',name:'Harbor Plumbing',vnd:'VND-0072',trade:'Plumbing',contract:18500,retHeld:925,coi:'g',coiLabel:'✓ Current',lienWaiver:'g',lwLabel:'Received',compliance:'g',compLabel:'OK'}
+  ],
+  'JB-0009':[
+    {sub:'SUB-12',name:'FastConcrete LLC',vnd:'VND-0031',trade:'Concrete',contract:68000,retHeld:3400,coi:'g',coiLabel:'✓ Current',lienWaiver:'g',lwLabel:'Received',compliance:'g',compLabel:'OK'},
+    {sub:'SUB-17',name:'Samuels Plumbing',vnd:'VND-0033',trade:'Plumbing',contract:11800,retHeld:590,coi:'a',coiLabel:'Pending',lienWaiver:'x',lwLabel:'Not Req.',compliance:'a',compLabel:'Pending'}
+  ],
+  'JB-0015':[
+    {sub:'SUB-18',name:'Oak Electrical',vnd:'VND-0075',trade:'Electrical',contract:14000,retHeld:700,coi:'g',coiLabel:'✓ Current',lienWaiver:'g',lwLabel:'Received',compliance:'g',compLabel:'OK'}
+  ]
+};
+
+S.projects=function(){
+  var projects=[
+    {id:'JB-0001',name:'Metro Tower',gc:'Apex Construction',type:'Commercial',pm:'David Kim',contract:1230500,startDate:'Jan 15, 2026',endDate:'Jun 30, 2026',retPct:'8%',bond:'Travelers $1.2M',certPayroll:'Yes',status:b('Active','a'),pctDone:'90%'},
+    {id:'JB-0012',name:'Harbor School',gc:'Harbor GC',type:'Education',pm:'Ralph Maarawi',contract:848500,startDate:'Oct 1, 2025',endDate:'Aug 31, 2026',retPct:'5%',bond:'Liberty Mutual $850K',certPayroll:'Yes',status:b('Active','a'),pctDone:'75%'},
+    {id:'JB-0009',name:'Riverside Plaza',gc:'Riverside Dev.',type:'Mixed-Use',pm:'Sarah Lee',contract:576000,startDate:'Feb 1, 2026',endDate:'Oct 15, 2026',retPct:'5%',bond:'N/A',certPayroll:'No',status:b('Active','a'),pctDone:'60%'},
+    {id:'JB-0015',name:'Oak Park Retail',gc:'Oak Park LLC',type:'Retail',pm:'David Kim',contract:292000,startDate:'Mar 1, 2026',endDate:'Sep 30, 2026',retPct:'5%',bond:'N/A',certPayroll:'No',status:b('Active','a'),pctDone:'40%'},
+    {id:'JB-0003',name:'Midtown Office Fit-Out',gc:'MTC Partners',type:'Commercial',pm:'Ralph Maarawi',contract:485000,startDate:'Nov 1, 2025',endDate:'Mar 31, 2026',retPct:'5%',bond:'N/A',certPayroll:'No',status:b('Complete','g'),pctDone:'100%'},
+    {id:'JB-0008',name:'Brooklyn Warehouse',gc:'BK Industrial',type:'Industrial',pm:'Sarah Lee',contract:1100000,startDate:'Jul 1, 2026',endDate:'Dec 31, 2026',retPct:'8%',bond:'Pending',certPayroll:'Yes',status:b('Upcoming','b'),pctDone:'0%'}
+  ];
+  function fmt(n){return'$'+n.toLocaleString();}
+  return ph('Project Register','Click any project to view its sub compliance details')+
+  krow([
+    kpi('Active Projects','4','',''),
+    kpi('Upcoming','1',['','Starting Jul 26'],''),
+    kpi('Completed','1',['up','This quarter'],''),
+    kpi('Total Contracted','$4.5M','',''),
+    kpi('Avg. Retainage %','6.2%',['wn','$127.6k held'],''),
+    kpi('Certified Payroll Jobs','2',['','Davis-Bacon'],'')
+  ])+
+  cardT('All Projects',btn('+ New Project','p')+btn('Export',''),
+    tbl(['Job #','Project Name','GC','Type','PM','Contract Value','Start Date','End Date','Ret. %','COI Status','Bonding','Cert. Payroll','% Done','Status'],[
+      projects.map(function(p){
+        var coiBadge=p.id==='JB-0001'?b('✓ Current','g'):p.id==='JB-0012'?b('⚠ Expiring','a'):p.id==='JB-0008'?b('Pending','x'):b('✓ Current','g');
+        return'<tr class="cl" onclick="showProjectCompliance(\''+p.id+'\',\''+p.name+'\')">'+
+          '<td><strong>'+p.id+'</strong></td><td><strong>'+p.name+'</strong></td><td>'+p.gc+'</td>'+
+          '<td>'+b(p.type,p.type==='Commercial'?'b':p.type==='Education'?'t':p.type==='Industrial'?'x':'g')+'</td>'+
+          '<td>'+p.pm+'</td><td>'+fmt(p.contract)+'</td><td>'+p.startDate+'</td><td>'+p.endDate+'</td>'+
+          '<td>'+p.retPct+'</td><td>'+coiBadge+'</td><td>'+p.bond+'</td>'+
+          '<td>'+(p.certPayroll==='Yes'?b('Yes','g'):b('No','x'))+'</td>'+
+          '<td>'+p.pctDone+'</td><td>'+p.status+'</td></tr>';
+      }).join('')
+    ],''))+
+  '<div id="proj-compliance"></div>';
+};
+
+function showProjectCompliance(jobId, jobName){
+  var subs=subsByJob[jobId]||[];
+  var activeSubs=subs.length;
+  var lienDue=subs.filter(function(s){return s.lienWaiver==='a'||s.lienWaiver==='x';}).length;
+  var retHeld=subs.reduce(function(t,s){return t+s.retHeld;},0);
+  var issues=subs.filter(function(s){return s.compliance==='r'||s.compliance==='a';}).length;
+  var rows=subs.map(function(s){
+    return'<tr class="cl">'+
+      '<td><strong>'+s.sub+'</strong></td>'+
+      '<td>'+s.name+'</td>'+
+      '<td>'+s.vnd+'</td>'+
+      '<td>'+jobId+'</td>'+
+      '<td>'+s.trade+'</td>'+
+      '<td>$'+s.contract.toLocaleString()+'</td>'+
+      '<td>$'+s.retHeld.toLocaleString()+'</td>'+
+      '<td>'+b(s.coiLabel,s.coi)+'</td>'+
+      '<td>'+b(s.lwLabel,s.lienWaiver==='x'?'x':s.lienWaiver)+'</td>'+
+      '<td>'+b(s.compLabel,s.compliance)+'</td>'+
+    '</tr>';
+  }).join('');
+  var html=
+    '<div style="margin-top:14px;border-top:2px solid var(--bd);padding-top:14px">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'+
+    '<div><div style="font-size:15px;font-weight:700;color:var(--nv)">'+jobName+' — Sub Compliance</div>'+
+    '<div style="font-size:11.5px;color:var(--gy)">Lien waivers, compliance documents, and sub-tier tracking</div></div>'+
+    '<button class="btn sm" onclick="document.getElementById(\'proj-compliance\').innerHTML=\'\'">✕ Close</button></div>'+
+    '<div class="kr" style="margin-top:10px">'+
+      kpi('Active Subs',activeSubs,'','')+
+      kpi('Lien Waivers Due',lienDue,lienDue>0?['wn','Before payment']:['up','All received'],lienDue>0?'hi':'')+
+      kpi('Sub Retainage Held','$'+retHeld.toLocaleString(),['wn','Held back'],'hi')+
+      kpi('Compliance Issues',issues,issues>0?['dn','COI or docs missing']:['up','All clear'],issues>0?'hi':'')+
+    '</div>'+
+    '<div class="cd"><div class="ch">Sub Compliance Register<div class="ax"><button class="btn sm p">+ New Sub</button></div></div>'+
+    '<div style="overflow-x:auto"><table><tr>'+
+    '<th>Sub#</th><th>Subcontractor</th><th>Vendor #</th><th>Job #</th><th>Trade</th><th>Contract</th><th>Ret Held</th><th>COI</th><th>Lien Waiver</th><th>Compliance</th>'+
+    '</tr>'+rows+'</table></div></div></div>';
+  var el=document.getElementById('proj-compliance');
+  if(el){el.innerHTML=html;el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+}
+
+S.dash=function(){
+  return ph('Good morning, Ralph 👋','Financial snapshot — Q2 2026')+
+  al('⚠ <strong>3 entries</strong> in AI queue · <strong>$84k</strong> retainage overdue · <strong>2 COIs</strong> expiring','w')+
+  krow([
+    kpi('AR Balance','$312,400',['up','↑ 12% vs last month'],''),
+    kpi('AP Balance','$198,750',['dn','↑ $22k bills'],''),
+    kpi('Retainage Held','$127,600',['wn','$84k overdue 90d+'],'hi'),
+    kpi('Cash — Operating','$88,300',['','Chase ••4482'],''),
+    kpi('Active Jobs','7',['','2 near completion'],''),
+    kpi('AI Review Queue','3',['wn','Needs sign-off'],'hi')
+  ])+
+  two(
+    cardT('AI Review Queue <span class="ai">✦ AI</span>',navbtn('Open Queue →','p','rq'),
+      tbl(['Type','Description','Amount','Confidence'],[
+        tr([b('AR','b'),'City Electric #811 — invoice','$6,200',b('74%','a')]),
+        tr([b('AP','a'),'Samuels Plumbing #44 — new vendor','$11,800',b('71%','a')]),
+        tr([b('Bank','t'),'Harbor Retainage Adj. — unclear doc','$3,100',b('58%','r')])
+      ])),
+    cardT('Retainage Summary',navbtn('Tracker →','','ret'),
+      tbl(['Job','Held','Age','Status'],[
+        tr(['Metro Tower','$52,000',b('110d','r'),b('Overdue','r')]),
+        tr(['Harbor Sch.','$32,200',b('75d','a'),b('In Review','b')]),
+        tr(['Riverside','$28,800',b('30d','x'),b('On Track','g')]),
+        tr(['Oak Park','$14,600',b('15d','x'),b('On Track','g')])
+      ]))
+  )+
+  two(
+    cardT('Active AIA Pay Apps',navbtn('+ New AIA','p','aia'),
+      tbl(['App#','Job','Amount','Status'],[
+        tr(['App #7','Metro Tower','$94,500',b('Awaiting GC Sig.','a')]),
+        tr(['App #4','Harbor Sch.','$62,000',b('Approved','g')]),
+        tr(['App #2','Riverside','$38,200',b('Draft','b')])
+      ])),
+    cardT('Compliance Alerts',navbtn('Hub →','','coh'),
+      tbl(['Item','Expires','Status'],[
+        tr(['COI — Travelers','May 2',b('Expiring','r')]),
+        tr(['COI — City Electric Sub','May 15',b('Expiring','r')]),
+        tr(['Bonding — Surety','Dec 26',b('Active','g')])
+      ]))
+  );
+};
+
+/* ── AI REVIEW QUEUE (enhanced per Tommy's notes) ───── */
+S.rq=function(){
+  return ph('AI Review Queue','All AI-processed entries requiring sign-off before posting')+
+  al('<span class="ai">✦ AI</span> Entries are tagged by source type (AR / AP / Bank). Each shows confidence score, source document, and why the AI is uncertain. Click any row to expand.','i')+
+  krow([
+    kpi('Pending Review','5',['wn','Action required'],'hi'),
+    kpi('Auto-Posted Today','11',['up','≥90% confidence'],''),
+    kpi('AR Items','1',['','Invoice extraction'],''),
+    kpi('AP Items','1',['','New vendor'],''),
+    kpi('Bank Items','1',['','Low confidence'],''),
+    kpi('CO Items','1',['wn','GC email detected'],'hi'),
+    kpi('Potential Duplicates','1',['dn','Manual + AI match'],'hi')
+  ])+
+  cardT('Pending Review — 5 items',btn('✓ Approve All','g'),
+    '<table><tr><th></th><th>Type</th><th>Date</th><th>Source</th><th>Description</th><th>Proposed Entry</th><th>Job #</th><th>Amount</th><th>Confidence</th><th>Actions</th></tr>'+
+    [['r1','AR','Apr 27','Email','City Electric Co. — Invoice #811','Dr 5000 · Cr 1100 · Cr 1150','JB-0012','$6,200',74,'a',
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11.5px;padding:9px 13px;background:#f8faff">'+
+      '<div><strong>Source Document</strong><br/>📎 city_electric_inv_811.pdf<br/><span class="sl">View original →</span><br/><br/>'+
+      '<strong>Why uncertain (74%)</strong><br/>Job code ambiguous — "Harbor Elec." could be JB-0012 (Harbor Sch.) or JB-0008 (Harbor GC Main). Recommend confirming.</div>'+
+      '<div><strong>AI Extracted Fields</strong><br/>Vendor: City Electric Co. (VND-0044)<br/>Invoice #: 811<br/>Date: Apr 27, 2026<br/>Net Amount: $5,580<br/>Retainage (5%): $620<br/>Job: Harbor Sch. — <span style="color:var(--am)">74% confidence</span></div>'+
+      '<div><strong>Proposed 3-Entry System</strong><br/><span style="color:var(--bl)">Dr</span> '+glsl('5000')+' Direct Labor $6,200<br/>'+
+      '<span style="color:var(--rd)">Cr</span> '+glsl('1100')+' AR $5,580<br/>'+
+      '<span style="color:var(--rd)">Cr</span> '+glsl('1150')+' Retainage Rec. $620<br/>'+
+      '<span style="color:var(--am);font-size:10.5px;margin-top:4px;display:block">⚠ Verify job code before posting</span></div></div>'],
+     ['r2','AP','Apr 26','Email','Samuels Plumbing — Invoice #44','Dr 5200 · Cr 2000','JB-0009','$11,800',71,'a',
+      '<div style="padding:9px 13px;background:#fffbeb;font-size:11.5px">'+
+      '<strong>Why uncertain (71%)</strong><br/>New vendor not in master list. No vendor number assigned. Possible duplicate: "Samuels Plumbing" vs "Samuels & Sons Plumbing" (VND-0031). Recommend creating new vendor record (VND-XXXX) before posting.<br/><br/>'+
+      '<strong>Proposed Entry:</strong> Dr '+glsl('5200')+' Subcontractors $11,800 / Cr '+glsl('2000')+' AP $11,800</div>'],
+     ['r3','Bank','Apr 25','PDF Upload','Harbor Retainage Adjustment','Dr 1150 · Cr 1100','JB-0012','$3,100',58,'r',
+      '<div style="padding:9px 13px;background:#fff5f5;font-size:11.5px;color:var(--rd)">'+
+      '<strong>Why uncertain (58%)</strong><br/>Partial scan — amount partially obscured. Document type unclear. Recommend requesting clear original from Harbor GC before posting.<br/><br/>'+
+      '<strong style="color:var(--tx)">Proposed Entry:</strong> <span style="color:var(--tx)">Dr '+glsl('1150')+' Retainage Rec. $3,100 / Cr '+glsl('1100')+' AR $3,100</span></div>'],
+     ['r4','CO','Apr 27','Email — apex@apexconst.com','COR Approval — MEP Rerouting CO-014','Dr 1100 · Cr 4000','JB-0001','$22,000',91,'g',
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:11.5px;padding:9px 13px;background:#f0fdf4">'+
+      '<div><strong>Source Email</strong><br/>📧 From: james.super@apexconst.com<br/>Subject: "RE: COR-014 MEP Rerouting — Approved"<br/>Received: Apr 27 3:22pm<br/><span class="sl">View original email →</span><br/><br/>'+
+      '<strong>AI detected</strong><br/>GC approval of COR-014 ($22,000). Status auto-updated from <span style="color:var(--am)">Pending</span> to <span style="color:var(--gn)">Approved</span> on the Universal COR Log.</div>'+
+      '<div><strong>Proposed Action</strong><br/>Post journal entry for approved CO:<br/><span style="color:var(--bl)">Dr</span> '+glsl('1100')+' AR $22,000<br/>'+
+      '<span style="color:var(--rd)">Cr</span> '+glsl('4000')+' Contract Revenue $22,000<br/><br/>'+
+      '<strong>COR Log Updated</strong><br/>COR-014 → '+b('Approved','g')+'<br/>Contract value: $1,208,500 → $1,230,500<br/>WIP % recalculated automatically.</div>'+
+      '<div><strong>Next Steps</strong><br/>1. Confirm entry and post to GL<br/>2. Include in next AIA Pay App #8<br/>3. Update retainage calculation (8% = $1,760)<br/><br/>'+
+      '<span style="color:var(--gn);font-size:10.5px">✦ Cru advantage: GC emailed approval — no Clearstory login required. Cru read the email and updated the COR log + proposed the GL entry automatically.</span></div></div>'],
+     ['r5','Dup','Apr 28','AI Detection','Apex Steel Invoice #2241 — Possible Duplicate','Dr 5100 · Cr 2000','JB-0001','$18,400',99,'g',
+      '<div style="padding:9px 13px;background:#fdf4ff;border-left:4px solid #7c3aed;font-size:11.5px">'+
+      '<strong style="color:#7c3aed">🔁 Potential Duplicate Detected</strong><br/><br/>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">'+
+      '<div style="background:#fff;border:1px solid var(--bd);border-radius:6px;padding:10px">'+
+      '<div style="font-size:10px;font-weight:700;color:var(--gy);text-transform:uppercase;margin-bottom:6px">✎ Manual Entry (JE-1142b)</div>'+
+      'Posted by: <strong>Ralph Maarawi</strong><br/>Date: Apr 28, 2026<br/>Source: Journal Entry<br/>'+
+      'Dr '+glsl('5100')+' Materials $18,400<br/>Cr '+glsl('2000')+' AP $18,400<br/>'+
+      '<div style="margin-top:6px;font-size:10.5px;color:var(--gy)">Entered manually at 8:44am</div></div>'+
+      '<div style="background:#fff;border:1px solid var(--bd);border-radius:6px;padding:10px">'+
+      '<div style="font-size:10px;font-weight:700;color:var(--gy);text-transform:uppercase;margin-bottom:6px"><span class="ai">✦ AI</span> Auto-Extracted (JE-1142)</div>'+
+      'Source: apex@apexsteel.com<br/>Invoice #2241 · Apr 28, 2026<br/>'+
+      'Dr '+glsl('5100')+' Materials $18,400<br/>Cr '+glsl('2000')+' AP $18,400<br/>'+
+      '<div style="margin-top:6px;font-size:10.5px;color:var(--gy)">AI confidence: 98% · Auto-posted at 9:14am</div></div></div>'+
+      '<div style="margin-top:10px;padding:8px 10px;background:#ede9fe;border-radius:6px;font-size:11.5px;color:#5b21b6">'+
+      '⚠ Both entries record the same transaction. Keeping both will cause a <strong>double-entry</strong>. Void the manual entry or dismiss the AI entry.</div>'+
+      '<div style="display:flex;gap:8px;margin-top:10px">'+btn('Void Manual Entry (keep AI)','p"')+btn('Keep Manual (void AI)','g"')+btn('They are different — keep both','')+'</div></div>']
+    ].map(function(row){
+      var pct=row[8];var col=row[9];
+      var typeColors={'AR':'b','AP':'a','Bank':'t','Dup':'p','CO':'g'};
+      var isDup=row[1]==='Dup';
+      var isCO=row[1]==='CO';
+      return'<tr class="cl" onclick="tRq(\''+row[0]+'\')" style="'+(isDup?'background:#fdf4ff;border-left:3px solid #7c3aed':isCO?'background:#f0fdf4;border-left:3px solid var(--gn)':'')+'">' +
+        '<td>▶</td>'+
+        '<td>'+(isDup?b('⚠ Duplicate','p'):isCO?b('📧 CO Approval','g'):b(row[1],typeColors[row[1]]))+'</td>'+
+        '<td>'+row[2]+'</td>'+
+        '<td>'+row[3]+'</td>'+
+        '<td style="font-size:11px">'+row[4]+'</td>'+
+        '<td style="font-size:11px">'+row[5]+'</td>'+
+        '<td style="font-size:11px">'+row[6]+'</td>'+
+        '<td>'+row[7]+'</td>'+
+        '<td>'+b(pct+'%',col)+'<div style="margin-top:2px;background:var(--lg);border-radius:2px;height:3px;width:60px">'+
+        '<div style="background:var(--'+(col==='r'?'rd':'am')+');width:'+pct+'%;height:3px;border-radius:2px"></div></div></td>'+
+        '<td>'+btn('✓','g')+' '+btn('✕','r')+'</td></tr>'+
+        '<tr id="'+row[0]+'" style="display:none"><td colspan="10">'+row[10]+'</td></tr>';
+    }).join('')+
+    '</table>')+
+  cardT('Posting History Log',btn('Export',''),
+    tbl(['Date & Time','Document','Type','Amount','Source','Confidence','Posted By','Method','Entry #','Attachment'],[
+      tr(['Apr 28 9:14am','Apex Steel Invoice #2241',b('AP','a'),'$18,400','apex@apexsteel.com',b('98%','g'),'<span class="ai">✦ AI</span>',b('Auto-Posted','g'),'JE-1142','<span class="sl">📎 apex_inv_2241.pdf</span>']),
+      tr(['Apr 27 4:32pm','City Electric Invoice #811',b('AP','a'),'$6,200','billing@cityelectric.com',b('74%','a'),'Ralph Maarawi',b('Manual Approved','b'),'JE-1141','<span class="sl">📎 city_electric_811.pdf</span>']),
+      tr(['Apr 26 2:11pm','AIA App #7 — Metro Tower',b('AR','b'),'$94,500','admin@harborGC.com',b('96%','g'),'<span class="ai">✦ AI</span>',b('Auto-Posted','g'),'JE-1139','<span class="sl">📎 aia_app7_metro.pdf</span>']),
+      tr(['Apr 26 11:50am','Samuels Plumbing Invoice #44',b('AP','a'),'$11,800','samuelsplumbing@gmail.com',b('71%','a'),'Ralph Maarawi',b('Manual Approved','b'),'JE-1141b','<span class="sl">📎 samuels_plumbing_44.pdf</span>']),
+      tr(['Apr 25 8:30am','SafetyFirst Insurance Apr',b('AP','a'),'$8,250','safetyfirst@ins.com',b('95%','g'),'<span class="ai">✦ AI</span>',b('Auto-Posted','g'),'JE-1144','<span class="sl">📎 safetyfirst_apr.pdf</span>']),
+      tr(['Apr 25 7:45am','Retainage Withheld — App #7',b('Bank','t'),'$7,560','Auto-generated',b('Auto','g'),'<span class="ai">✦ AI</span>',b('Auto-Posted','g'),'JE-1138','<span style="color:var(--gy);font-size:11px">— System entry</span>']),
+      tr(['Apr 24 2:00pm','Diesel Pro Invoice DP-22',b('AP','a'),'$5,100','dieselpro@fuel.com',b('90%','g'),'<span class="ai">✦ AI</span>',b('Auto-Posted','g'),'JE-1143','<span class="sl">📎 diesel_pro_dp22.pdf</span>']),
+      tr(['Apr 23 11:20am','Harbor Retainage Adjustment',b('Bank','t'),'$3,100','PDF Upload',b('58%','r'),'Ralph Maarawi',b('Manual Approved','b'),'JE-1137','<span class="sl">📎 harbor_ret_adj.pdf</span>']),
+      tr(['Apr 22 3:10pm','Payroll Week 16',b('AP','a'),'$22,800','ADP Sync',b('99%','g'),'<span class="ai">✦ AI</span>',b('Auto-Posted','g'),'JE-1132','<span class="sl">🔗 ADP Report W16</span>'])
+    ]));
+};
+function tRq(id){var e=document.getElementById(id);if(e)e.style.display=e.style.display==='none'?'table-row':'none';}
+
+/* ── DATA INPUTS ─────────────────────────────────────── */
+S.email=function(){
+  return ph('Email / Invoice Ingestion','AI reads your inbox and extracts invoice data automatically')+
+  al('<span class="ai">✦ AI</span> Connected to ralph.maarawi@constrafor.com. Scanning for invoices, pay apps, and retainage docs every 15 minutes.','ok')+
+  krow([kpi('Processed (Apr)','47 docs','',''),kpi('Auto-Posted','43',['up','91%'],''),kpi('In Review Queue','3',['wn','Action needed'],'hi'),kpi('Rejected','1',['dn','Bad scan'],'')])+
+  cardT('Recent Extractions',btn('View All →',''),
+    tbl(['Received','From','Subject / Document','Type','Amount','Confidence','Status'],[
+      tr(['Apr 28 9:14am','apex@apexsteel.com','Invoice #2241 — Metro Tower',b('AP','a'),'$18,400',b('98%','g'),b('Auto-Posted','g')]),
+      tr(['Apr 27 4:32pm','billing@cityelectric.com','Invoice #811 — Harbor Sch.',b('AP','a'),'$6,200',b('74%','a'),b('In Queue','a')]),
+      tr(['Apr 26 2:11pm','admin@harborGC.com','AIA App #7 — Metro Tower',b('AIA','b'),'$94,500',b('96%','g'),b('Auto-Posted','g')]),
+      tr(['Apr 25 11:50am','samuelsplumbing@gmail.com','Inv #44 — Riverside',b('AP','a'),'$11,800',b('71%','a'),b('In Queue','a')])
+    ]));
+};
+
+S.connectors=function(){
+  function connCard(c){
+    return'<div class="conn-card"><div style="display:flex;align-items:center"><div class="conn-icon" style="background:var(--lg)">🔌</div>'+
+      '<div><div style="font-weight:600;font-size:12px">'+c[0]+'</div>'+
+      '<div style="font-size:11px;color:var(--gy)">'+c[2]+'</div>'+
+      '<div style="font-size:10.5px;color:var(--gy);margin-top:1px">'+c[5]+'</div></div></div>'+
+      '<div style="text-align:right">'+
+      (c[4]==='✓ Connected'?b('✓ Connected','g'):c[4]==='Import Only'?b('Import Only','b'):b('Setup Required','x'))+
+      '</div></div>';
+  }
+  var email=[
+    ['Gmail / Google Workspace','gmail','Invoice &amp; pay app extraction from inbox','✓ Connected','g','ralph.maarawi@constrafor.com'],
+    ['Outlook / Microsoft 365','outlook','Invoice extraction via Microsoft inbox','Setup Required','x','Not connected'],
+    ['Email Forwarding (Any)','fwd','Forward invoices to invoices@cru.app','✓ Connected','g','invoices@cru.app']
+  ];
+  var arPlatforms=[
+    ['GCPay','gc-pay','GC billing &amp; pay app platform','✓ Connected','g','Last sync: 2 min ago'],
+    ['Procore','procore','Project management &amp; document storage','✓ Connected','g','Last sync: 5 min ago'],
+    ['Textura (Oracle)','textura','GC payment platform','Setup Required','x','Not connected']
+  ];
+  var apPlatforms=[
+    ['Sage Intacct','sage','Existing ERP (migration source)','Import Only','b','Manual CSV export'],
+    ['QuickBooks','qbo','Legacy accounting (migration source)','Import Only','b','Manual export'],
+    ['Foundation Software','foundation','Construction accounting (migration source)','Import Only','b','Manual CSV export']
+  ];
+  var payrollPlatforms=[
+    ['ADP','adp','Payroll processing &amp; certified payroll','✓ Connected','g','Weekly sync']
+  ];
+  var coiPlatforms=[
+    ['Email','email-coi','Receive COI documents via email inbox','✓ Connected','g','Auto-extracted via AI'],
+    ['myCOI','mycoi','Dedicated COI tracking &amp; compliance platform','Setup Required','x','Not connected'],
+    ['Paladin Risk Management','paladin','Enterprise risk &amp; COI management','Setup Required','x','Not connected']
+  ];
+  var connectedAccounts=[
+    {name:'Chase Checking',sub:'Operating Account',mask:'••••4482',bal:'$88,300',type:'Checking',sync:'Synced 2 min ago',gl:'1000'},
+    {name:'Chase Checking',sub:'Payroll Account',mask:'••••7741',bal:'$42,000',type:'Checking',sync:'Synced 2 min ago',gl:'1010'}
+  ];
+  var projSettings=
+  '<div style="font-size:14px;font-weight:700;color:var(--nv);margin-bottom:4px">Project Connector Settings</div>'+
+  '<div style="font-size:12px;color:var(--gy);margin-bottom:12px">Assign which connector to use for billing and data ingestion per project. Changes take effect immediately.</div>'+
+  '<div class="cd">'+
+  '<div class="ch">Connector Assignment by Project<div class="ax">'+btn('Save All Changes','p')+'</div></div>'+
+  '<table>'+
+  '<tr><th>Job #</th><th>Project</th><th>GC</th>'+
+  '<th>AR Billing <span style="font-size:9px;color:var(--gy);font-weight:400;display:block">How you submit invoices to GC</span></th>'+
+  '<th>AP Ingestion <span style="font-size:9px;color:var(--gy);font-weight:400;display:block">How vendor bills are captured</span></th>'+
+  '<th>Bank Account <span style="font-size:9px;color:var(--gy);font-weight:400;display:block">Account for transactions</span></th>'+
+  '<th>Payroll <span style="font-size:9px;color:var(--gy);font-weight:400;display:block">Labor data source</span></th>'+
+  '<th>COI <span style="font-size:9px;color:var(--gy);font-weight:400;display:block">Insurance cert. source</span></th></tr>'+
+  [['JB-0001','Metro Tower','Apex Construction','gcpay','email','1000','adp','email'],
+   ['JB-0012','Harbor School','Harbor GC','procore','email','1000','adp','mycoi'],
+   ['JB-0009','Riverside Plaza','Riverside Dev.','cru','email','1000','csv','email'],
+   ['JB-0015','Oak Park Retail','Oak Park LLC','cru','email','1010','adp','email']
+  ].map(function(row){
+    var arOptions=[['cru','Cru Native'],['gcpay','GCPay'],['procore','Procore'],['textura','Textura']];
+    var apOptions=[['email','Email AI'],['manual','Manual Entry'],['csv','CSV Upload']];
+    var bankOptions=[['1000','Chase ••4482 — Operating'],['1010','Chase ••7741 — Payroll'],['1020','Savings']];
+    var defaultBanks=row[5]==='1010'?['1010']:['1000'];
+    var payOptions=[['adp','ADP'],['csv','CSV Upload'],['manual','Manual']];
+    var coiOptions=[['email','Email'],['mycoi','myCOI'],['paladin','Paladin Risk Mgmt']];
+    function sel(opts,selected,paramId){
+      return'<select id="'+paramId+'" style="border:1px solid var(--bd);border-radius:5px;padding:5px 8px;font-size:11.5px;background:#fff;cursor:pointer;width:100%" onchange="connDirty(\''+row[0]+'\')">'+
+        opts.map(function(o){return'<option value="'+o[0]+'"'+(o[0]===selected?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';
+    }
+    function bankSel(opts,defaults,paramId){
+      return'<select id="'+paramId+'" multiple style="border:1px solid var(--bd);border-radius:5px;padding:3px 6px;font-size:11.5px;background:#fff;cursor:pointer;width:100%;height:62px" onchange="connDirty(\''+row[0]+'\')" title="Hold Ctrl/Cmd to select multiple">'+
+        opts.map(function(o){return'<option value="'+o[0]+'"'+(defaults.indexOf(o[0])>-1?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+
+        '<div style="font-size:9.5px;color:var(--gy);margin-top:2px">Hold Ctrl/⌘ to select multiple</div>';
+    }
+    var arBadge=row[3]==='gcpay'?b('GCPay','b'):row[3]==='procore'?b('Procore','t'):row[3]==='textura'?b('Textura','x'):b('Cru Native','g');
+    return'<tr id="row-'+row[0]+'"><td><strong>'+row[0]+'</strong></td><td>'+row[1]+'</td><td style="color:var(--gy)">'+row[2]+'</td>'+
+      '<td>'+sel(arOptions,row[3],'ar-'+row[0])+'<div style="margin-top:4px">'+arBadge+'</div></td>'+
+      '<td>'+sel(apOptions,row[4],'ap-'+row[0])+'</td>'+
+      '<td>'+bankSel(bankOptions,defaultBanks,'bank-'+row[0])+'</td>'+
+      '<td>'+sel(payOptions,row[6],'pay-'+row[0])+'</td>'+
+      '<td>'+sel(coiOptions,row[7],'coi-'+row[0])+'</td></tr>';
+  }).join('')+
+  '</table></div>';
+
+  return ph('Data Connectors','All integrations and data sources for Cru Ledger')+
+  projSettings+
+  '<div style="margin-top:20px">'+
+  al('Connected data flows directly into the AI Review Queue. Manual CSV imports are available as a fallback for any source.','i')+'</div>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📧 Email</div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'+
+  email.map(connCard).join('')+
+  '</div>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🏦 Bank Accounts</div>'+
+  '<div class="conn-card" style="margin-bottom:10px;justify-content:space-between">'+
+    '<div style="display:flex;align-items:center;gap:10px">'+
+      '<div class="conn-icon" style="background:#f0fdf4;font-size:16px">🔗</div>'+
+      '<div><div style="font-weight:600;font-size:12px">Plaid</div>'+
+      '<div style="font-size:11px;color:var(--gy)">Universal bank connection — connect any US bank account</div>'+
+      '<div style="font-size:10.5px;color:var(--gy);margin-top:1px">2 accounts connected</div></div></div>'+
+    '<div style="display:flex;align-items:center;gap:8px">'+b('✓ Connected','g')+
+    '<button class="btn sm p">+ Add Account</button></div>'+
+  '</div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'+
+  connectedAccounts.map(function(a){
+    return'<div class="conn-card" style="flex-direction:column;align-items:flex-start;gap:6px">'+
+      '<div style="display:flex;justify-content:space-between;width:100%;align-items:center">'+
+        '<div style="display:flex;align-items:center;gap:8px">'+
+          '<div style="width:32px;height:32px;border-radius:6px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:14px">🏦</div>'+
+          '<div><div style="font-weight:600;font-size:12px">'+a.name+' '+a.mask+'</div>'+
+          '<div style="font-size:11px;color:var(--gy)">'+a.sub+' · '+a.type+'</div></div></div>'+
+        b('✓ Active','g')+'</div>'+
+      '<div style="display:flex;justify-content:space-between;width:100%;padding-top:6px;border-top:1px solid var(--bd)">'+
+        '<div><div style="font-size:10px;color:var(--gy);text-transform:uppercase;letter-spacing:.3px">Current Balance</div>'+
+        '<div style="font-size:16px;font-weight:700;color:var(--nv)">'+a.bal+'</div></div>'+
+        '<div style="text-align:right"><div style="font-size:10px;color:var(--gy)">GL Account</div>'+
+        '<div class="sl" onclick="glD(\''+a.gl+'\')" style="font-size:12px;font-weight:600">'+a.gl+'</div>'+
+        '<div style="font-size:10px;color:var(--gy);margin-top:2px">'+a.sync+'</div></div></div>'+
+    '</div>';
+  }).join('')+
+  '</div>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">↑ Accounts Receivable</div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'+
+  arPlatforms.map(connCard).join('')+
+  '</div>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📂 Migration Source</div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'+
+  apPlatforms.map(connCard).join('')+
+  '</div>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">💰 Payroll</div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'+
+  payrollPlatforms.map(connCard).join('')+
+  '</div>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🛡 Certificate of Insurance (COI)</div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px">'+
+  coiPlatforms.map(connCard).join('')+
+  '</div>';
+};
+function connDirty(jobId){
+  var s=document.getElementById('status-'+jobId);
+  if(s){s.className='b ba';s.textContent='Unsaved';}
+}
+
+S.bank=function(){
+  var txns=[
+    ['Apr 28','WIRE OUT — APEX STEEL',38400,'Debit','Matched','AP Pmt Apex #2241','JE-1135','Metro','m'],
+    ['Apr 27','WIRE OUT — CITY ELECTRIC',6200,'Debit','Matched','AP Pmt City Elec.','JE-1136','Harbor','m'],
+    ['Apr 25','ACH IN — HARBOR GC',62000,'Credit','Matched','AR Receipt INV-2198','JE-1131','Harbor','m'],
+    ['Apr 26','PAYROLL — ADP',24100,'Debit','Matched','Payroll Wk 17','JE-1140','All','m'],
+    ['Apr 25','ZELLE — SAMUELS PLUMBING',11800,'Debit','Unmatched','No GL entry — new vendor?','—','?','u'],
+    ['Apr 24','ACH IN — OAK PARK LLC',28800,'Credit','Matched','AR Receipt INV-2155','JE-1128','Oak Park','m'],
+    ['Apr 23','AMEX — HOME DEPOT',842,'Debit','Review','5100 Materials or 5500 Other?','—','?','rv'],
+    ['Apr 21','ACH IN — APEX CONSTRUCTION',94500,'Credit','Unmatched','GC pmt — no AR entry yet','—','Metro?','u']
+  ];
+  return ph('Bank Transactions','Live feed — AI matches to GL entries')+
+  al('<span class="ai">✦ AI</span> Bank sync active. Cru auto-matches to open AP, AR, and payroll entries.','i')+
+  two(
+    '<div style="border:1px solid var(--bl);border-radius:6px;padding:11px 14px;background:var(--lb);margin-bottom:11px"><div style="font-size:10px;color:var(--gy);text-transform:uppercase">Chase Checking — Operating (1000)</div><div style="font-size:18px;font-weight:700">$88,300</div><div style="font-size:10.5px;color:var(--gy)">••••4482 · Synced 2 min ago · '+b('✓ Connected','g')+'</div></div>',
+    '<div style="border:1px solid var(--bd);border-radius:6px;padding:11px 14px;background:#fff;margin-bottom:11px"><div style="font-size:10px;color:var(--gy);text-transform:uppercase">Chase Checking — Payroll (1010)</div><div style="font-size:18px;font-weight:700">$42,000</div><div style="font-size:10.5px;color:var(--gy)">••••7741 · Synced 2 min ago · '+b('✓ Connected','g')+'</div></div>'
+  )+
+  krow([kpi('Imported (Apr)','47 txns','',''),kpi('Auto-Matched','43',['up','91%'],''),kpi('Unmatched','2',['dn','Needs action'],'hi'),kpi('Review','2',['wn','Classify'],'')])+
+  cardT('Transaction Feed — April 2026',btn('Sync Now','p')+btn('Export',''),
+    '<table><tr><th></th><th>Date</th><th>Bank Description</th><th>Amount</th><th>Type</th><th>AI Match</th><th>Matched To</th><th>Status</th><th>Action</th></tr>'+
+    txns.map(function(tx){
+      var dot='<span class="md '+tx[8]+'"></span>';
+      var amt=(tx[3]==='Credit'?'<span style="color:var(--gn)">+':'<span style="color:var(--rd)">−')+'$'+tx[2].toLocaleString()+'</span>';
+      var status=tx[8]==='m'?b('Matched','g'):tx[8]==='u'?b('Unmatched','r'):b('Review','a');
+      var action=tx[8]==='m'?'<span style="color:var(--gy)">✓</span>':tx[8]==='u'?btn('+ Entry','p')+' '+btn('Match',''):btn('Accept','g')+' '+btn('Edit','');
+      return'<tr class="cl"><td>'+dot+'</td><td>'+tx[0]+'</td><td style="font-size:11px">'+tx[1]+'</td>'+
+        '<td style="font-weight:600">'+amt+'</td><td>'+b(tx[3],tx[3]==='Credit'?'b':'x')+'</td>'+
+        '<td style="font-size:11px">'+tx[5]+'</td><td style="font-size:11px">'+tx[6]+'</td>'+
+        '<td>'+status+'</td><td>'+action+'</td></tr>';
+    }).join('')+
+    '</table>');
+};
+
+/* ── ACCOUNTS RECEIVABLE ─────────────────────────────── */
+S.ar=function(){
+  return ph('Accounts Receivable','Invoices billed to General Contractors')+
+  al('<span class="ai">✦ AI</span> 3 invoices in '+navsl('Review Queue','rq')+' · Apex $94,500 payment visible in '+navsl('Bank Transactions','bank'),'i')+
+  krow([kpi('Total Outstanding','$312,400','',''),kpi('0–30 Days','$184,200','',''),kpi('31–60 Days','$94,000','',''),kpi('60+ Days','$34,200','','hi')])+
+  cardT('Invoices',navbtn('📋 AIA App','','aia')+btn('+ Standard Invoice','p'),
+    tbl(['#','Job #','GC','Job','Type','Net Amount','Retainage','Total','Due','Status','GL'],[
+      tr(['INV-2241','JB-0001','Apex','Metro Tower',b('AIA App #7','b'),'$86,940','$7,560','$94,500','May 15',b('Awaiting Sig.','a'),glsl('1100')]),
+      tr(['INV-2198','JB-0012','Harbor GC','Harbor Sch.',b('Standard','x'),'$58,900','$3,100','$62,000','Apr 30',b('Overdue','r'),glsl('1100')]),
+      tr(['INV-2180','JB-0009','Riverside','Riverside',b('AIA App #2','b'),'$36,290','$1,910','$38,200','May 10',b('Draft','b'),glsl('1100')]),
+      tr(['INV-2190','JB-0015','Oak Park','Oak Park',b('T&M','p'),'$14,800','$0','$14,800','May 5',b('Sent','x'),glsl('1100')])
+    ]));
+};
+
+/* ── AIA PAY APP with GCPay toggle ───────────────────── */
+S.aia=function(){
+  return ph('AIA Pay Application — G702/G703','App #7 · Metro Tower — Phase 2 · April 30, 2026')+
+  al('★ Native AIA format. <strong>Mutually exclusive</strong> with GCPay/Procore — use one workflow per project.','ok')+
+  '<div class="tog-wrap"><div class="tog-opt on" id="tog-cru" onclick="setAiaTog(\'cru\')">Build in Cru (G702/G703)</div><div class="tog-opt" id="tog-gcpay" onclick="setAiaTog(\'gcpay\')">Submit via GCPay</div><div class="tog-opt" id="tog-procore" onclick="setAiaTog(\'procore\')">Submit via Procore</div></div>'+
+  '<div id="aia-cru">'+
+  card('G702 — Application and Certificate for Payment',btn('Save Draft','')+btn('Submit &amp; Sign','p')+btn('Submit &amp; Notarize','t'),
+    fg([['Project / Job #','Metro Tower — JB-0001',1],['Application No.','7',1],['Period To','April 30, 2026',1],
+        ['Original Contract','$1,200,000',1],['Net Change by COs','+$30,500',1],['Contract Sum','$1,230,500',1],
+        ['Retainage %','8%',1],['Contract Date','Jan 15, 2026',1],['Architect','Skyline Architects',0]],'fg3')+
+    '<div style="margin:8px 0 4px;font-size:10px;font-weight:700;color:var(--gy);text-transform:uppercase">Auto-Computed G702 Summary</div>'+
+    krow([kpi('Work Completed','$820,000','',''),kpi('Less Retainage (8%)','$65,600','',''),
+          kpi('Earned Less Ret.','$754,400','',''),kpi('Less Prev. Certs.','$659,900','',''),kpi('Current Pmt Due','$94,500','','hi')]))+
+  cardT('G703 — Schedule of Values','',
+    tbl(['#','Description','Sched. Value','Prev.','This Period','% Complete','Balance','Retainage'],[
+      tr(['1','Mobilization','$45,000','$45,000','$0',b('100%','g'),'$0','$3,600']),
+      tr(['2','Foundation','$180,000','$180,000','$0',b('100%','g'),'$0','$14,400']),
+      tr(['3','Structural Steel','$320,000','$240,000','$52,000',b('91%','a'),'$28,000','$23,360']),
+      tr(['4','MEP Rough-In','$210,000','$120,000','$42,000',b('77%','a'),'$48,000','$12,960']),
+      tr(['5','Ext. Cladding','$165,000','$60,000','$0',b('36%','a'),'$105,000','$4,800']),
+      tr(['6','Int. Finishes','$280,000','$0','$0',b('0%','x'),'$280,000','$0']),
+      ['<tr style="font-weight:700;background:var(--lg)"><td colspan="2">TOTALS</td><td>$1,200,000</td><td>$645,000</td><td>$94,000</td><td>68%</td><td>$461,000</td><td>$59,120</td></tr>']
+    ]))+
+  '</div>'+
+  '<div id="aia-gcpay" style="display:none">'+
+  card('Submit via GCPay','',
+    '<div style="font-size:12px;color:var(--gy);margin-bottom:12px">This project is configured to bill through <strong>GCPay</strong>. Cru will sync billing data and record the journal entries once payment is approved in GCPay.</div>'+
+    fg([['GCPay Project ID','GCP-20261-MT',1],['Contract #','GCP-C-8841',1],['Current Period','April 2026',1],['Sync Status',b('✓ Live Sync','g'),0]])+
+    '<div style="margin-top:10px">'+btn('Open in GCPay →','p')+'</div>')+
+  '</div>'+
+  '<div id="aia-procore" style="display:none">'+
+  card('Submit via Procore','',
+    '<div style="font-size:12px;color:var(--gy);margin-bottom:12px">This project is configured to bill through <strong>Procore</strong>. Billing data syncs automatically. Journal entries are recorded in Cru upon payment certification.</div>'+
+    fg([['Procore Project ID','PRO-2026-MT-002',1],['Contract Type','Subcontract',1],['Last Sync','Apr 28, 9:14am',1],['Sync Status',b('✓ Live Sync','g'),0]])+
+    '<div style="margin-top:10px">'+btn('Open in Procore →','p')+'</div>')+
+  '</div>';
+};
+function setAiaTog(v){
+  ['cru','gcpay','procore'].forEach(function(x){
+    document.getElementById('tog-'+x).classList.toggle('on',x===v);
+    document.getElementById('aia-'+x).style.display=x===v?'block':'none';
+  });
+}
+
+/* ── ACCOUNTS PAYABLE (30/60/90/120+ aging + Checkbook) ─ */
+S.ap=function(){
+  return ph('Accounts Payable','Bills from vendors, subs, and suppliers')+
+  al('<span class="ai">✦ AI</span> 5 bills extracted — 2 in '+navsl('Review Queue','rq')+'. Payment options: ACH, '+navsl('Check (Checkbook.io)','ap'),' or Wire.','i')+
+  krow([
+    kpi('Total Owed','$198,750','',''),
+    kpi('0–30 Days','$138,400','',''),
+    kpi('31–60 Days','$42,250','',''),
+    kpi('61–90 Days','$12,000',['wn','Aging'],'hi'),
+    kpi('90–120 Days','$4,200',['dn','Action'],'hi'),
+    kpi('120+ Days','$1,900',['dn','Critical'],'hi')
+  ])+
+  cardT('Bills',btn('+ Enter Bill','p')+btn('Print Checks',''),
+    tbl(['Vendor','Vendor #','Job #','Category','Net','Retainage','Total','Due Date','Payment Terms','Aging','Status','Pay','GL'],[
+      tr(['Apex Steel Supply','VND-0022','JB-0001','Materials','$36,570','$1,830','$38,400','May 2','Net 30',b('Current','g'),b('Due Soon','a'),btn('Pay','g'),glsl('5100')]),
+      tr(['City Electric Co.','VND-0044','JB-0012','Sub Labor','$23,000','$1,200','$24,200','Apr 30','Net 30',b('1–30d','g'),b('Overdue','r'),btn('Pay','g'),glsl('5000')]),
+      tr(['FastConcrete LLC','VND-0031','JB-0009','Sub-Contract','$58,710','$3,090','$61,800','May 15','Net 45',b('Current','g'),b('Scheduled','b'),btn('Pay','g'),glsl('5000')]),
+      tr(['SafetyFirst Inc.','VND-0018','All','Insurance','$8,250','$0','$8,250','May 1','Due on receipt',b('Current','g'),b('Due Soon','a'),btn('Pay','g'),glsl('5400')]),
+      tr(['Diesel Pro','VND-0055','JB-0015','Equipment','$5,100','$0','$5,100','Apr 28','Net 15',b('31–60d','a'),b('Overdue','r'),btn('Pay','g'),glsl('5300')])
+    ]))+
+  card('Payment Processing',btn('Schedule Payments','p'),
+    '<div style="font-size:12px;color:var(--gy);margin-bottom:10px">Select payment method per vendor. Check printing via <strong>Checkbook.io</strong> (CEO relationship). Payment holds auto-applied if sub COI is expired.</div>'+
+    tbl(['Vendor','Amount','Method','Terms','COI Status','Hold?'],[
+      tr(['Apex Steel Supply','$38,400',b('ACH','b'),'Net 30',b('✓ Current','g'),'—']),
+      tr(['City Electric Co.','$24,200',b('Check','x'),'Net 30',b('⚠ Expiring','a'),b('⚠ Hold COI','a')]),
+      tr(['FastConcrete LLC','$61,800',b('ACH','b'),'Net 45',b('✓ Current','g'),'—']),
+      tr(['SafetyFirst Inc.','$8,250',b('e-Check','p'),'Due on receipt',b('N/A','x'),'—']),
+      tr(['Diesel Pro','$5,100',b('Check','x'),'Net 15',b('✓ Current','g'),'—'])
+    ]));
+};
+
+/* ── POs & SUBCONTRACTS ──────────────────────────────── */
+S.pos=function(){
+  return ph('POs & Subcontracts','Purchase orders and sub agreements — committed costs before invoices arrive')+
+  krow([kpi('Open POs','$148,200','',''),kpi('Active Subcontracts','8','',''),kpi('Committed Costs','$246,200','',''),kpi('Sub Retainage Held','$34,200',['wn','$12k 60d+'],'hi')])+
+  cardT('Purchase Orders',btn('+ New PO','p'),
+    tbl(['PO#','Vendor','Vendor #','Job #','Category','PO Amt','Received','Remaining','Payment Terms','Status','GL'],[
+      tr(['PO-0441','Apex Steel Supply','VND-0022','JB-0001','Materials','$45,000','$38,400','$6,600','Net 30',b('Partial','a'),glsl('5100')]),
+      tr(['PO-0440','FastConcrete LLC','VND-0031','JB-0009','Sub-Contract','$68,000','$0','$68,000','Net 45',b('Open','b'),glsl('5200')]),
+      tr(['PO-0439','Diesel Pro','VND-0055','JB-0015','Equipment','$5,100','$5,100','$0','Net 15',b('Complete','g'),glsl('5300')]),
+      tr(['PO-0438','SafetyFirst Inc.','VND-0018','All','Insurance','$22,000','$0','$22,000','Due on receipt',b('Overdue','r'),glsl('5400')])
+    ]))+
+  cardT('Subcontracts',btn('+ New Subcontract','p'),
+    tbl(['Sub#','Subcontractor','Vendor #','Job #','Trade','Contract','Payment Terms','Ret%','Ret Held','COI Status','Status'],[
+      tr(['SUB-12','FastConcrete LLC','VND-0031','JB-0009','Concrete','$68,000','Net 45','5%','$3,400',b('✓ Current','g'),b('Active','b')]),
+      tr(['SUB-11','City Electric Co.','VND-0044','JB-0012','Electrical','$24,200','Net 30','5%','$1,210',b('⚠ Expiring','a'),b('Active','b')]),
+      tr(['SUB-09','Steel Fab Inc.','VND-0067','JB-0001','Steel','$44,000','Net 30','8%','$15,400',b('🚨 Expired','r'),b('Complete','g')])
+    ]));
+};
+
+/* ── JOURNAL ENTRIES ─────────────────────────────────── */
+S.je=function(){
+  return ph('Journal Entries','All posted transactions — 3-entry system for AIA billing')+
+  al('Pending entries in '+navsl('Review Queue','rq')+'. AIA entries use 3-entry system: Dr Revenue / Cr AR (net) / Cr Retainage Receivable.','i')+
+  cardT('Posted Entries',btn('+ Manual Entry','p'),
+    tbl(['Entry#','Date','Description','Debit','Credit','Source','Status'],[
+      tr(['JE-1142','Apr 28','Apex Steel #2241','5100 $18,400','2000 $18,400','<span class="ai">AI 98%</span>',b('Posted','g')]),
+      tr(['JE-1140','Apr 26','Payroll Wk 17','5000 $24,100','1010 $24,100','<span class="ai">AI 99%</span>',b('Posted','g')]),
+      tr(['JE-1139a','Apr 25','AIA App #7 — Revenue','4000 $94,500','','Manual',b('Posted','g')]),
+      tr(['JE-1139b','Apr 25','AIA App #7 — AR (net)','','1100 $86,940','Manual',b('Posted','g')]),
+      tr(['JE-1139c','Apr 25','AIA App #7 — Retainage','','1150 $7,560','Auto',b('Posted','g')]),
+      tr(['JE-1135','Apr 25','Vendor Pmt Apex','2000 $38,400','1000 $38,400',b('Bank Sync','t'),b('Posted','g')])
+    ]));
+};
+
+/* ── GENERAL LEDGER (view-only) ──────────────────────── */
+S.gl=function(){
+  var ts=['Asset','Liability','Equity','Revenue','COGS','Expense'];
+  var h=ph('General Ledger','View-only — all transactions from all sources. Click any row to drill into detail.')+
+  al('The GL is auto-populated from all entries. To request a new account, contact support — users cannot create accounts directly.','i');
+  ts.forEach(function(t){
+    var rows=glA.filter(function(a){return a.t===t;});
+    h+='<div class="cd" style="margin-bottom:9px"><div class="ch">'+t+'</div>'+
+      tbl(['Code','Account Name','Opening','Total Debits','Total Credits','Ending Balance'],
+        rows.map(function(a){
+          var e=a.o+a.d-a.cr;
+          return tr(['<strong>'+a.c+'</strong>',a.n,fm(a.o),
+            '<span style="color:var(--bl)">'+fm(a.d)+'</span>',
+            '<span style="color:var(--rd)">'+fm(a.cr)+'</span>',
+            '<strong>'+fm(e)+'</strong>'],'cl',"glD('"+a.c+"')");
+        }))+
+      '</div>';
+  });
+  return h;
+};
+
+/* ── CHART OF ACCOUNTS (report view with date filter) ── */
+S.coa=function(){
+  var cc={Asset:'b',Liability:'r',Revenue:'g',COGS:'a',Equity:'t',Expense:'x'};
+  return ph('Chart of Accounts','Report view — accounts cannot be created directly. Request new accounts via support.')+
+  al('To request a new account: Settings → Support → "Request New GL Account". Our team will configure correct debit/credit mapping and assign the account number.','i')+
+  card('Filter',btn('Apply','p'),
+    '<div style="display:flex;gap:10px;align-items:flex-end">'+
+    '<div class="fl" style="flex:1"><label>Period</label><div class="mi on">Q1 2026 (Jan 1 – Mar 31)</div></div>'+
+    '<div class="fl" style="flex:1"><label>Account Type</label><div class="mi on">All Types</div></div>'+
+    '<div class="fl" style="flex:1"><label>Show Zero Balances</label><div class="mi">No</div></div></div>')+
+  cardT('Account Register',btn('Export',''),
+    tbl(['Code','Account Name','Type','Opening Balance','Total Debits','Total Credits','Ending Balance'],
+      glA.map(function(a){
+        var e=a.o+a.d-a.cr;
+        return tr(['<strong>'+a.c+'</strong>',a.n,b(a.t,cc[a.t]),fm(a.o),
+          '<span style="color:var(--bl)">'+fm(a.d)+'</span>',
+          '<span style="color:var(--rd)">'+fm(a.cr)+'</span>',
+          '<strong>'+fm(e)+'</strong>'],'cl',"glD('"+a.c+"')");
+      })));
+};
+
+/* ── P&L ─────────────────────────────────────────────── */
+S.reports=function(){
+  var plContent=
+    krow([kpi('Total Revenue','$650,500','',''),kpi('Gross Profit','$140,050',['up','21.5% margin'],''),kpi('Net Income','$98,050','','')])+
+    '<div class="cd"><table><tr><th>Account</th><th>Amount</th><th>GL</th></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>REVENUE</strong></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Contract Revenue (incl. COs)</td><td style="color:var(--gn)">$650,500</td><td>'+glsl('4000')+'</td></tr>'+
+    '<tr style="font-weight:700"><td>Total Revenue</td><td>$650,500</td><td></td></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>COST OF GOODS SOLD</strong></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Direct Labor</td><td style="color:var(--rd)">$148,000</td><td>'+glsl('5000')+'</td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Materials</td><td style="color:var(--rd)">$224,000</td><td>'+glsl('5100')+'</td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Subcontractors</td><td style="color:var(--rd)">$98,000</td><td>'+glsl('5200')+'</td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Equipment Costs</td><td style="color:var(--rd)">$28,000</td><td>'+glsl('5300')+'</td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Insurance — Job</td><td style="color:var(--rd)">$8,250</td><td>'+glsl('5400')+'</td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Other Job Costs</td><td style="color:var(--rd)">$4,200</td><td>'+glsl('5500')+'</td></tr>'+
+    '<tr style="font-weight:700"><td>Total COGS</td><td>$510,450</td><td></td></tr>'+
+    '<tr style="font-weight:700;font-size:13px"><td>GROSS PROFIT</td><td style="color:var(--gn)">$140,050</td><td></td></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>EXPENSES (G&amp;A)</strong></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;General &amp; Admin</td><td style="color:var(--rd)">$42,000</td><td>'+glsl('6000')+'</td></tr>'+
+    '<tr style="font-weight:700;font-size:13px"><td>NET INCOME</td><td style="color:var(--gn)">$98,050</td><td></td></tr>'+
+    '</table></div>';
+
+  var bsContent=
+    '<div class="two">'+
+    '<div class="cd"><div class="ch">Assets</div>'+
+    tbl(['Account','Balance','GL'],[
+      tr(['Cash — Operating (1000)','$88,300',glsl('1000')]),
+      tr(['Cash — Payroll (1010)','$42,000',glsl('1010')]),
+      tr(['Cash — Savings (1020)','$15,000',glsl('1020')]),
+      tr(['Accounts Receivable','$312,400',glsl('1100')]),
+      tr(['Retainage Receivable','<strong style="color:var(--am)">$127,600</strong>',glsl('1150')]),
+      tr(['Revenue in Excess (WIP)','$18,400',glsl('1300')]),
+      tr(['Prepaid Expenses','$12,000',glsl('1200')]),
+      tr(['Equipment (Net)','$347,000',glsl('1500')]),
+      tr(['<strong>Total Assets</strong>','<strong>$962,700</strong>',''])
+    ])+'</div>'+
+    '<div class="cd"><div class="ch">Liabilities &amp; Equity</div>'+
+    tbl(['Account','Balance','GL'],[
+      tr(['Accounts Payable','$198,750',glsl('2000')]),
+      tr(['Wages Payable','$16,800',glsl('2100')]),
+      tr(['Payroll Taxes Payable','$3,360',glsl('2110')]),
+      tr(['Employee Benefits Payable','$1,940',glsl('2120')]),
+      tr(['Billings in Excess (WIP)','<strong style="color:var(--rd)">$41,200</strong>',glsl('2300')]),
+      tr(['Line of Credit','$150,000',glsl('2500')]),
+      tr(['Equipment Loans','$48,000',glsl('2510')]),
+      tr(['<strong>Total Liabilities</strong>','<strong>$460,050</strong>','']),
+      tr(['Owner Equity','$480,000','']),
+      tr(['Retained Earnings + NI','$222,500','']),
+      tr(['<strong>Total L&amp;E</strong>','<strong>$962,700</strong>',''])
+    ])+'</div></div>';
+
+  var cfContent=
+    '<div class="cd"><table><tr><th>Category</th><th>Description</th><th>Amount</th></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>OPERATING ACTIVITIES</strong></td></tr>'+
+    '<tr><td></td><td>Net Income</td><td style="color:var(--gn)">$98,050</td></tr>'+
+    '<tr><td></td><td>Increase in AR</td><td style="color:var(--rd)">($64,400)</td></tr>'+
+    '<tr><td></td><td>Increase in Retainage Receivable</td><td style="color:var(--rd)">($32,800)</td></tr>'+
+    '<tr><td></td><td>Increase in Billings in Excess (WIP)</td><td style="color:var(--gn)">$41,200</td></tr>'+
+    '<tr><td></td><td>Increase in AP</td><td style="color:var(--gn)">$56,750</td></tr>'+
+    '<tr style="font-weight:700"><td></td><td>Net Cash from Operations</td><td>$98,800</td></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>INVESTING ACTIVITIES</strong></td></tr>'+
+    '<tr><td></td><td>Equipment Purchase</td><td style="color:var(--rd)">($45,000)</td></tr>'+
+    '<tr style="font-weight:700"><td></td><td>Net Cash from Investing</td><td style="color:var(--rd)">($45,000)</td></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>FINANCING ACTIVITIES</strong></td></tr>'+
+    '<tr><td></td><td>Line of Credit Draw</td><td style="color:var(--gn)">$50,000</td></tr>'+
+    '<tr style="font-weight:700;font-size:13px"><td></td><td>NET CHANGE IN CASH</td><td style="color:var(--gn)">$103,800</td></tr>'+
+    '</table></div>';
+
+  return ph('Reports','Financial statements — Q1 2026')+
+  card('Period Filter',btn('Apply','p'),
+    '<div style="display:flex;gap:10px">'+
+    '<div class="fl" style="flex:1"><label>Period</label><div class="mi on">Q1 2026 (Jan–Mar)</div></div>'+
+    '<div class="fl" style="flex:1"><label>View</label><div class="mi on">Job Consolidated</div></div>'+
+    '<div class="fl" style="flex:1"><label>Snapshot Date (Balance Sheet)</label><div class="mi on">March 31, 2026</div></div></div>')+
+  '<div class="tog-wrap">'+
+    '<div class="tog-opt on" id="rep-pl" onclick="repTab(\'pl\')">📈 Profit &amp; Loss</div>'+
+    '<div class="tog-opt" id="rep-bs" onclick="repTab(\'bs\')">⚖ Balance Sheet</div>'+
+    '<div class="tog-opt" id="rep-cf" onclick="repTab(\'cf\')">💵 Cash Flow</div>'+
+  '</div>'+
+  '<div id="rep-content">'+plContent+'</div>';
+};
+function repTab(t){
+  var plContent=
+    '<div class="kr"><div class="kp"><div class="kl">Total Revenue</div><div class="kv">$650,500</div></div>'+
+    '<div class="kp"><div class="kl">Gross Profit</div><div class="kv">$140,050</div><div class="ks up">21.5% margin</div></div>'+
+    '<div class="kp"><div class="kl">Net Income</div><div class="kv">$98,050</div></div></div>'+
+    '<div class="cd"><table><tr><th>Account</th><th>Amount</th><th>GL</th></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>REVENUE</strong></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Contract Revenue (incl. COs)</td><td style="color:var(--gn)">$650,500</td><td><span class="sl" onclick="glD(\'4000\')">4000</span></td></tr>'+
+    '<tr style="font-weight:700"><td>Total Revenue</td><td>$650,500</td><td></td></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>COST OF GOODS SOLD</strong></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Direct Labor</td><td style="color:var(--rd)">$148,000</td><td><span class="sl" onclick="glD(\'5000\')">5000</span></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Materials</td><td style="color:var(--rd)">$224,000</td><td><span class="sl" onclick="glD(\'5100\')">5100</span></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Subcontractors</td><td style="color:var(--rd)">$98,000</td><td><span class="sl" onclick="glD(\'5200\')">5200</span></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Equipment Costs</td><td style="color:var(--rd)">$28,000</td><td><span class="sl" onclick="glD(\'5300\')">5300</span></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Insurance — Job</td><td style="color:var(--rd)">$8,250</td><td><span class="sl" onclick="glD(\'5400\')">5400</span></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;Other Job Costs</td><td style="color:var(--rd)">$4,200</td><td><span class="sl" onclick="glD(\'5500\')">5500</span></td></tr>'+
+    '<tr style="font-weight:700"><td>Total COGS</td><td>$510,450</td><td></td></tr>'+
+    '<tr style="font-weight:700;font-size:13px"><td>GROSS PROFIT</td><td style="color:var(--gn)">$140,050</td><td></td></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>EXPENSES (G&amp;A)</strong></td></tr>'+
+    '<tr><td>&nbsp;&nbsp;General &amp; Admin</td><td style="color:var(--rd)">$42,000</td><td><span class="sl" onclick="glD(\'6000\')">6000</span></td></tr>'+
+    '<tr style="font-weight:700;font-size:13px"><td>NET INCOME</td><td style="color:var(--gn)">$98,050</td><td></td></tr>'+
+    '</table></div>';
+  var bsContent=
+    '<div class="two">'+
+    '<div class="cd"><div class="ch">Assets</div><table><tr><th>Account</th><th>Balance</th><th>GL</th></tr>'+
+    '<tr><td>Cash — Operating (1000)</td><td>$88,300</td><td><span class="sl" onclick="glD(\'1000\')">1000</span></td></tr>'+
+    '<tr><td>Cash — Payroll (1010)</td><td>$42,000</td><td><span class="sl" onclick="glD(\'1010\')">1010</span></td></tr>'+
+    '<tr><td>Cash — Savings (1020)</td><td>$15,000</td><td><span class="sl" onclick="glD(\'1020\')">1020</span></td></tr>'+
+    '<tr><td>Accounts Receivable</td><td>$312,400</td><td><span class="sl" onclick="glD(\'1100\')">1100</span></td></tr>'+
+    '<tr><td>Retainage Receivable</td><td><strong style="color:var(--am)">$127,600</strong></td><td><span class="sl" onclick="glD(\'1150\')">1150</span></td></tr>'+
+    '<tr><td>Revenue in Excess (WIP)</td><td>$18,400</td><td><span class="sl" onclick="glD(\'1300\')">1300</span></td></tr>'+
+    '<tr><td>Equipment (Net)</td><td>$347,000</td><td><span class="sl" onclick="glD(\'1500\')">1500</span></td></tr>'+
+    '<tr style="font-weight:700"><td>Total Assets</td><td>$962,700</td><td></td></tr>'+
+    '</table></div>'+
+    '<div class="cd"><div class="ch">Liabilities &amp; Equity</div><table><tr><th>Account</th><th>Balance</th><th>GL</th></tr>'+
+    '<tr><td>Accounts Payable</td><td>$198,750</td><td><span class="sl" onclick="glD(\'2000\')">2000</span></td></tr>'+
+    '<tr><td>Wages Payable</td><td>$16,800</td><td><span class="sl" onclick="glD(\'2100\')">2100</span></td></tr>'+
+    '<tr><td>Payroll Taxes Payable</td><td>$3,360</td><td><span class="sl" onclick="glD(\'2110\')">2110</span></td></tr>'+
+    '<tr><td>Employee Benefits Payable</td><td>$1,940</td><td><span class="sl" onclick="glD(\'2120\')">2120</span></td></tr>'+
+    '<tr><td>Billings in Excess (WIP)</td><td><strong style="color:var(--rd)">$41,200</strong></td><td><span class="sl" onclick="glD(\'2300\')">2300</span></td></tr>'+
+    '<tr><td>Line of Credit</td><td>$150,000</td><td><span class="sl" onclick="glD(\'2500\')">2500</span></td></tr>'+
+    '<tr><td>Equipment Loans</td><td>$48,000</td><td><span class="sl" onclick="glD(\'2510\')">2510</span></td></tr>'+
+    '<tr style="font-weight:700"><td>Total Liabilities</td><td>$460,050</td><td></td></tr>'+
+    '<tr><td>Owner Equity</td><td>$480,000</td><td></td></tr>'+
+    '<tr><td>Retained Earnings + NI</td><td>$222,500</td><td></td></tr>'+
+    '<tr style="font-weight:700"><td>Total L&amp;E</td><td>$962,700</td><td></td></tr>'+
+    '</table></div></div>';
+  var cfContent=
+    '<div class="cd"><table><tr><th>Category</th><th>Description</th><th>Amount</th></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>OPERATING ACTIVITIES</strong></td></tr>'+
+    '<tr><td></td><td>Net Income</td><td style="color:var(--gn)">$98,050</td></tr>'+
+    '<tr><td></td><td>Increase in AR</td><td style="color:var(--rd)">($64,400)</td></tr>'+
+    '<tr><td></td><td>Increase in Retainage Receivable</td><td style="color:var(--rd)">($32,800)</td></tr>'+
+    '<tr><td></td><td>Increase in Billings in Excess (WIP)</td><td style="color:var(--gn)">$41,200</td></tr>'+
+    '<tr><td></td><td>Increase in AP</td><td style="color:var(--gn)">$56,750</td></tr>'+
+    '<tr style="font-weight:700"><td></td><td>Net Cash from Operations</td><td>$98,800</td></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>INVESTING ACTIVITIES</strong></td></tr>'+
+    '<tr><td></td><td>Equipment Purchase</td><td style="color:var(--rd)">($45,000)</td></tr>'+
+    '<tr style="font-weight:700"><td></td><td>Net Cash from Investing</td><td style="color:var(--rd)">($45,000)</td></tr>'+
+    '<tr style="background:var(--lg)"><td colspan="3"><strong>FINANCING ACTIVITIES</strong></td></tr>'+
+    '<tr><td></td><td>Line of Credit Draw</td><td style="color:var(--gn)">$50,000</td></tr>'+
+    '<tr style="font-weight:700;font-size:13px"><td></td><td>NET CHANGE IN CASH</td><td style="color:var(--gn)">$103,800</td></tr>'+
+    '</table></div>';
+  var contents={pl:plContent,bs:bsContent,cf:cfContent};
+  ['pl','bs','cf'].forEach(function(x){
+    var el=document.getElementById('rep-'+x);
+    if(el)el.classList.toggle('on',x===t);
+  });
+  var d=document.getElementById('rep-content');
+  if(d)d.innerHTML=contents[t]||'';
+}
+
+S.pl=function(){
+  return ph('Profit & Loss','Period: Q1 2026 (Jan 1 – Mar 31) — select period to filter')+
+  card('Period Filter',btn('Apply','p'),
+    '<div style="display:flex;gap:10px"><div class="fl" style="flex:1"><label>Period</label><div class="mi on">Q1 2026 (Jan–Mar)</div></div>'+
+    '<div class="fl" style="flex:1"><label>View</label><div class="mi on">Job Consolidated</div></div></div>')+
+  krow([kpi('Total Revenue','$650,500','',''),kpi('Gross Profit','$152,500',['up','23.4% margin'],''),kpi('Net Income','$110,500','','')])+
+  '<div class="cd"><table><tr><th>Account</th><th>Amount</th><th>GL</th></tr>'+
+  '<tr style="background:var(--lg)"><td colspan="3"><strong>REVENUE</strong></td></tr>'+
+  '<tr><td>&nbsp;&nbsp;Contract Revenue (incl. COs)</td><td style="color:var(--gn)">$650,500</td><td>'+glsl('4000')+'</td></tr>'+
+  '<tr style="font-weight:700"><td>Total Revenue</td><td>$650,500</td><td></td></tr>'+
+  '<tr style="background:var(--lg)"><td colspan="3"><strong>COST OF GOODS SOLD</strong></td></tr>'+
+  '<tr><td>&nbsp;&nbsp;Direct Labor</td><td style="color:var(--rd)">$148,000</td><td>'+glsl('5000')+'</td></tr>'+
+  '<tr><td>&nbsp;&nbsp;Materials</td><td style="color:var(--rd)">$224,000</td><td>'+glsl('5100')+'</td></tr>'+
+  '<tr><td>&nbsp;&nbsp;Subcontractors</td><td style="color:var(--rd)">$98,000</td><td>'+glsl('5200')+'</td></tr>'+
+  '<tr><td>&nbsp;&nbsp;Equipment Costs</td><td style="color:var(--rd)">$28,000</td><td>'+glsl('5300')+'</td></tr>'+
+  '<tr><td>&nbsp;&nbsp;Insurance — Job</td><td style="color:var(--rd)">$8,250</td><td>'+glsl('5400')+'</td></tr>'+
+  '<tr><td>&nbsp;&nbsp;Other Job Costs</td><td style="color:var(--rd)">$4,200</td><td>'+glsl('5500')+'</td></tr>'+
+  '<tr style="font-weight:700"><td>Total COGS</td><td>$510,450</td><td></td></tr>'+
+  '<tr style="font-weight:700;font-size:13px"><td>GROSS PROFIT</td><td style="color:var(--gn)">$140,050</td><td></td></tr>'+
+  '<tr style="background:var(--lg)"><td colspan="3"><strong>EXPENSES (G&amp;A)</strong></td></tr>'+
+  '<tr><td>&nbsp;&nbsp;General &amp; Admin</td><td style="color:var(--rd)">$42,000</td><td>'+glsl('6000')+'</td></tr>'+
+  '<tr style="font-size:10px;color:var(--gy)"><td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;↳ Future expansion: indirect labor, benefits, rent, consulting</td></tr>'+
+  '<tr style="font-weight:700;font-size:13px"><td>NET INCOME</td><td style="color:var(--gn)">$98,050</td><td></td></tr>'+
+  '</table></div>';
+};
+
+/* ── BALANCE SHEET ───────────────────────────────────── */
+S.bs=function(){
+  return ph('Balance Sheet','Snapshot at end of period — Q1 2026 (March 31, 2026)')+
+  card('Period Filter',btn('Apply','p'),
+    '<div style="display:flex;gap:10px"><div class="fl" style="flex:1"><label>Snapshot Date</label><div class="mi on">March 31, 2026 (end of Q1)</div></div></div>')+
+  two(
+    '<div class="cd"><div class="ch">Assets</div>'+
+    tbl(['Account','Balance','GL'],[
+      tr(['Cash — Operating (1000)','$88,300',glsl('1000')]),
+      tr(['Cash — Payroll (1010)','$42,000',glsl('1010')]),
+      tr(['Cash — Savings (1020)','$15,000',glsl('1020')]),
+      tr(['Accounts Receivable','$312,400',glsl('1100')]),
+      tr(['Retainage Receivable','<strong style="color:var(--am)">$127,600</strong>',glsl('1150')]),
+      tr(['Revenue in Excess of Billings (WIP)','$18,400',glsl('1300')]),
+      tr(['Prepaid Expenses','$12,000',glsl('1200')]),
+      tr(['Equipment (Net)','$347,000',glsl('1500')]),
+      tr(['<strong>Total Assets</strong>','<strong>$962,700</strong>',''])
+    ])+'</div>',
+    '<div class="cd"><div class="ch">Liabilities &amp; Equity</div>'+
+    tbl(['Account','Balance','GL'],[
+      tr(['Accounts Payable','$198,750',glsl('2000')]),
+      tr(['Wages Payable','$16,800',glsl('2100')]),
+      tr(['Payroll Taxes Payable','$3,360',glsl('2110')]),
+      tr(['Employee Benefits Payable','$1,940',glsl('2120')]),
+      tr(['Billings in Excess (WIP)','<strong style="color:var(--rd)">$41,200</strong>',glsl('2300')]),
+      tr(['Line of Credit','$150,000',glsl('2500')]),
+      tr(['Equipment Loans','$48,000',glsl('2510')]),
+      tr(['<strong>Total Liabilities</strong>','<strong>$460,050</strong>','']),
+      tr(['Owner Equity','$480,000','']),
+      tr(['Retained Earnings + NI','$222,500','']),
+      tr(['<strong>Total L&amp;E</strong>','<strong>$962,700</strong>',''])
+    ])+'</div>');
+};
+
+/* ── CASH FLOW ───────────────────────────────────────── */
+S.cf=function(){
+  return ph('Cash Flow','Q1 2026')+
+  '<div class="cd"><table><tr><th>Category</th><th>Description</th><th>Amount</th></tr>'+
+  '<tr style="background:var(--lg)"><td colspan="3"><strong>OPERATING ACTIVITIES</strong></td></tr>'+
+  '<tr><td></td><td>Net Income</td><td style="color:var(--gn)">$98,050</td></tr>'+
+  '<tr><td></td><td>Increase in AR</td><td style="color:var(--rd)">($64,400)</td></tr>'+
+  '<tr><td></td><td>Increase in Retainage Receivable</td><td style="color:var(--rd)">($32,800)</td></tr>'+
+  '<tr><td></td><td>Increase in Billings in Excess (WIP)</td><td style="color:var(--gn)">$41,200</td></tr>'+
+  '<tr><td></td><td>Increase in AP</td><td style="color:var(--gn)">$56,750</td></tr>'+
+  '<tr style="font-weight:700"><td></td><td>Net Cash from Operations</td><td>$98,800</td></tr>'+
+  '<tr style="background:var(--lg)"><td colspan="3"><strong>INVESTING ACTIVITIES</strong></td></tr>'+
+  '<tr><td></td><td>Equipment Purchase</td><td style="color:var(--rd)">($45,000)</td></tr>'+
+  '<tr style="font-weight:700"><td></td><td>Net Cash from Investing</td><td style="color:var(--rd)">($45,000)</td></tr>'+
+  '<tr style="background:var(--lg)"><td colspan="3"><strong>FINANCING ACTIVITIES</strong></td></tr>'+
+  '<tr><td></td><td>Line of Credit Draw</td><td style="color:var(--gn)">$50,000</td></tr>'+
+  '<tr style="font-weight:700;font-size:13px"><td></td><td>NET CHANGE IN CASH</td><td style="color:var(--gn)">$103,800</td></tr>'+
+  '</table></div>';
+};
+
+/* ── JOBS & WIP (merged per CEO feedback) ───────────── */
+S.jwip=function(){
+  var jobs=[
+    {id:'JB-0001',name:'Metro Tower',gc:'Apex',base:1200000,apCO:30500,pendCO:22000,allowance:0,baseComm:980000,changComm:62500,jtdCost:1012000,gmPrior:0.191,gmCur:0.178,jtdBill:1238477,ret:52000},
+    {id:'JB-0012',name:'Harbor School',gc:'Harbor GC',base:840000,apCO:8500,pendCO:0,allowance:0,baseComm:660000,changComm:28500,jtdCost:612000,gmPrior:0.178,gmCur:0.220,jtdBill:768170,ret:32200},
+    {id:'JB-0009',name:'Riverside Plaza',gc:'Riverside Dev.',base:576000,apCO:0,pendCO:0,allowance:0,baseComm:438000,changComm:0,jtdCost:320000,gmPrior:0.172,gmCur:0.243,jtdBill:421056,ret:28800},
+    {id:'JB-0015',name:'Oak Park Retail',gc:'Oak Park LLC',base:292000,apCO:0,pendCO:0,allowance:0,baseComm:228000,changComm:0,jtdCost:112000,gmPrior:0.182,gmCur:0.218,jtdBill:143372,ret:14600}
+  ];
+  function fmt(n){return'$'+Math.round(n).toLocaleString();}
+  function pct(n){return(n*100).toFixed(1)+'%';}
+  var rows=jobs.map(function(j){
+    var totalRev=j.base+j.apCO+j.pendCO+j.allowance;
+    var totalCost=j.baseComm+j.changComm;
+    var costToComplete=j.jtdCost>totalCost?j.jtdCost-totalCost:0;
+    var totalCostFinal=costToComplete>0?totalCost+costToComplete:totalCost;
+    var pctComplete=totalCostFinal>0?j.jtdCost/totalCostFinal:0;
+    var gmCur=(totalRev-totalCostFinal)/totalRev;
+    var gainFade=gmCur-j.gmPrior;
+    var underOver=pctComplete*totalRev-j.jtdBill;
+    var pctCol=pctComplete>=0.9?'a':pctComplete>=0.7?'b':'g';
+    var gmCol=gmCur>=0.15?'g':gmCur>=0.05?'a':'r';
+    var gfCol=gainFade>=0?'g':'r';
+    var uoCol=underOver<0?'r':'g';
+    return'<tr class="cl">'+
+      '<td><strong>'+j.id+'</strong></td>'+
+      '<td>'+j.name+'</td>'+
+      '<td style="color:var(--gy)">'+j.gc+'</td>'+
+      '<td>'+fmt(j.base)+'</td>'+
+      '<td style="color:var(--gn)">'+fmt(j.apCO)+'</td>'+
+      '<td style="color:var(--am)">'+fmt(j.pendCO)+'</td>'+
+      '<td>'+fmt(j.allowance||0)+'</td>'+
+      '<td style="font-weight:600">'+fmt(totalRev)+'</td>'+
+      '<td>'+fmt(j.baseComm)+'</td>'+
+      '<td>'+fmt(j.changComm)+'</td>'+
+      '<td>'+fmt(costToComplete)+'</td>'+
+      '<td style="font-weight:600">'+fmt(totalCostFinal)+'</td>'+
+      '<td>'+fmt(j.jtdCost)+'</td>'+
+      '<td>'+b(pct(gmCur),gmCol)+'</td>'+
+      '<td style="color:var(--gy)">'+pct(j.gmPrior)+'</td>'+
+      '<td>'+b((gainFade>=0?'+':'')+pct(gainFade),gfCol)+'</td>'+
+      '<td>'+b(pct(pctComplete),pctCol)+'<div style="background:var(--lg);border-radius:2px;height:3px;width:60px;margin-top:2px"><div style="background:var(--'+(pctCol==='r'?'gn':pctCol==='a'?'am':'bl')+');width:'+Math.min(pctComplete*100,100)+'%;height:3px;border-radius:2px"></div></div></td>'+
+      '<td>'+fmt(j.jtdBill)+'</td>'+
+      '<td>'+b(fmt(Math.abs(underOver))+(underOver<0?' Over':' Under'),uoCol)+'</td>'+
+    '</tr>';
+  });
+  var totRev=jobs.reduce(function(s,j){return s+j.base+j.apCO+j.pendCO;},0);
+  var totCost=jobs.reduce(function(s,j){return s+j.baseComm+j.changComm;},0);
+  var totJTD=jobs.reduce(function(s,j){return s+j.jtdCost;},0);
+  var totBill=jobs.reduce(function(s,j){return s+j.jtdBill;},0);
+  var totUO=jobs.reduce(function(s,j){var tr2=j.base+j.apCO;var tc=j.baseComm+j.changComm;var pc=j.jtdCost/tc;return s+(pc*tr2-j.jtdBill);},0);
+  var totGM=(totRev-totCost)/totRev;
+  var totRow='<tr style="font-weight:700;background:var(--lg)"><td colspan="3">TOTALS</td>'+
+    '<td>'+fmt(jobs.reduce(function(s,j){return s+j.base;},0))+'</td>'+
+    '<td>'+fmt(jobs.reduce(function(s,j){return s+j.apCO;},0))+'</td>'+
+    '<td>'+fmt(jobs.reduce(function(s,j){return s+j.pendCO;},0))+'</td>'+
+    '<td>—</td><td>'+fmt(totRev)+'</td>'+
+    '<td>'+fmt(jobs.reduce(function(s,j){return s+j.baseComm;},0))+'</td>'+
+    '<td>'+fmt(jobs.reduce(function(s,j){return s+j.changComm;},0))+'</td>'+
+    '<td>—</td><td>'+fmt(totCost)+'</td><td>'+fmt(totJTD)+'</td>'+
+    '<td>'+b(pct(totGM),(totGM>=0.15?'g':totGM>=0.05?'a':'r'))+'</td>'+
+    '<td>—</td><td>—</td><td>—</td><td>'+fmt(totBill)+'</td>'+
+    '<td>'+b(fmt(Math.abs(totUO))+(totUO<0?' Over':' Under'),totUO<0?'r':'g')+'</td></tr>';
+
+  return ph('WIP','Work-in-Progress Schedule — April 30, 2026')+
+  al('<span class="ai">✦ AI</span> % Complete auto-calculated via cost-to-cost method (JTD Cost ÷ Total Cost). No manual entry required.','ok')+
+  krow([
+    kpi('Active Jobs','4','',''),
+    kpi('Total Revenue','$'+Math.round(totRev/1000)+'K','',''),
+    kpi('Total Over-Billed','$41,200',['wn','Liability to GCs'],'hi'),
+    kpi('Total Under-Billed','$18,400',['','Revenue to bill'],''),
+    kpi('Avg. Gross Margin',pct(totGM),['up','Across all jobs'],''),
+    kpi('Retainage Held','$127,600',['wn','$84k overdue'],'hi')
+  ])+
+  '<div class="cd"><div class="ch">WIP Schedule<div class="ax">'+btn('+ New Job','p')+btn('Export WIP','')+'</div></div>'+
+  '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">'+
+  '<table style="min-width:1400px;width:max-content">'+
+  '<tr style="background:var(--lg)">'+
+  '<th colspan="3">Job</th>'+
+  '<th colspan="5" style="text-align:center;border-left:2px solid var(--bd)">Revenue</th>'+
+  '<th colspan="4" style="text-align:center;border-left:2px solid var(--bd)">Costs</th>'+
+  '<th colspan="3" style="text-align:center;border-left:2px solid var(--bd)">Gross Margin</th>'+
+  '<th colspan="3" style="text-align:center;border-left:2px solid var(--bd)">Billing Status</th>'+
+  '</tr>'+
+  '<tr>'+
+  '<th>Job #</th><th>Job Name</th><th>GC</th>'+
+  '<th style="border-left:2px solid var(--bd)">Base Contract</th><th>Approved COs</th><th>Pending COs</th><th>Allowances</th><th>Total Revenue</th>'+
+  '<th style="border-left:2px solid var(--bd)">Base Commitments</th><th>Change Commitments</th><th>Cost to Complete</th><th>Total Cost</th>'+
+  '<th style="border-left:2px solid var(--bd)">JTD Cost Incurred</th>'+
+  '<th>GM % (Current)</th><th>GM % (Prior)</th><th>Gain / Fade</th>'+
+  '<th style="border-left:2px solid var(--bd)">% Complete <span class="ai" style="font-size:9px">✦ Auto</span></th><th>JTD Billings</th><th>Under / (Over) Billed</th>'+
+  '</tr>'+
+  rows.join('')+totRow+
+  '</table></div></div>'+
+  card('Metro Tower — Job Detail',btn('Edit',''),
+    fg([['Job Number','JB-0001',1],['Original Contract','$1,200,000',1],['Contract Sum w/ COs','$1,230,500',1],
+        ['Retainage %','8%',1],['Permit #','BLD-2026-0441',0],['Bonding / Surety','Travelers — $1.2M',0],
+        ['Lien Waiver Status','Conditional Progress App #6 ✓',1],['Certified Payroll','Yes — Prevailing Wage',1],
+        ['Completion','June 30, 2026',0]],'fg3')+
+    '<div style="margin-top:10px">'+navbtn('View Change Orders →','','co')+' '+navbtn('View Retainage →','','ret')+'</div>');
+};
+
+/* ── CHANGE ORDERS ───────────────────────────────────── */
+S.co=function(){
+  return ph('Change Orders & T&M','COR log, T&M field tags, and Change Notifications — replaces Clearstory for specialty contractors')+
+  al('★ Cru advantage: Approved CORs auto-post to '+glsl('4000')+' GL — no re-entry into your ERP. T&M Tags from the field roll up directly into CORs.','ok')+
+
+  /* Portfolio KPIs */
+  krow([
+    kpi('COR Exposure (All Jobs)','$91,700',['wn','Revenue at risk'],'hi'),
+    kpi('Approved (Pending Billing)','$62,200',['up','Ready to invoice'],''),
+    kpi('Pending GC Review','$29,500',['wn','Awaiting approval'],'hi'),
+    kpi('Rejected','$3,200',['dn','Requires revision'],''),
+    kpi('Avg. Days to Approval','18d',['wn','Target: 10d'],''),
+    kpi('Unsynced to GL','2 CORs',['wn','Post after approval'],'hi')
+  ])+
+
+  /* Change Notifications — inbound from GC */
+  cardT('📨 Change Notifications — Inbound from GC',btn('+ Log Response','p'),
+    al('<span class="ai">✦ AI</span> GC-initiated pricing requests (ASIs, RFIs, drawing changes). Respond with your COR directly — no email required.','i')+
+    tbl(['CN#','Job #','GC','Trigger','Description','Received','Response Due','Your COR','Status'],[
+      tr(['CN-007','JB-0001','Apex Construction','ASI-12 Drawing Rev.','MEP rerouting — revised ductwork routing on floors 8–12','Apr 18','Apr 25',b('COR-014 Submitted','a'),b('Awaiting GC Approval','a')]),
+      tr(['CN-006','JB-0012','Harbor GC','RFI-44 Response','Foundation spec upgrade — engineer-directed soil treatment','Apr 8','Apr 15',b('COR-013 Approved','g'),b('Approved','g')]),
+      tr(['CN-005','JB-0009','Riverside Dev.','Owner Directive','Additional parking structure scope — verbal directive','Mar 30','Apr 5',b('No COR Filed','r'),b('Action Required','r')])
+    ],''))+
+
+  /* T&M Tags */
+  cardT('🏗 T&M Tags — Field-Captured Extra Work',btn('+ New T&M Tag','p')+btn('Roll Up to COR',''),
+    al('Field crews log T&M work on-site with photos and digital GC signature. Tags automatically aggregate into a COR for submission.','i')+
+    tbl(['Tag #','Job #','Date','Foreman','Description','Labor Hrs','Materials','Total Value','GC Signature','Linked COR'],[
+      tr(['TM-041','JB-0001','Apr 27','D. Kim','Emergency pipe reroute — floor 9 MEP conflict','8 hrs × $52.80','Pipe fittings $420','$843',b('✓ Signed — J. Apex','g'),b('→ COR-014','a')]),
+      tr(['TM-040','JB-0001','Apr 26','M. Lopez','Structural steel shimming — uneven column base','6 hrs × $48.60','Shims $180','$472',b('✓ Signed — J. Apex','g'),b('→ COR-014','a')]),
+      tr(['TM-039','JB-0012','Apr 25','T. Brown','Electrical conduit reroute — RFI-44 directive','4 hrs × $54.20','Conduit $310','$527',b('✓ Signed — M. Harbor','g'),b('→ COR-013','g')]),
+      tr(['TM-038','JB-0009','Apr 24','J. Patel','Extra excavation — unforeseen rock layer','10 hrs × $38.40','Equipment $620','$1,004',b('⚠ Unsigned','r'),b('Pending COR','r')])
+    ],''))+
+
+  /* Universal COR Log */
+  cardT('📋 Universal COR Log — Shared with GC',
+    btn('+ New COR','p')+btn('Share with GC 🔗','')+btn('Export',''),
+    al('This is the <strong>single shared log</strong> both you and your GC see in real time. No more two disconnected spreadsheets — one version, always current.','i')+
+    tbl(['COR #','Job #','Job','Trigger','Description','Allowance Bucket','Labor','Materials','Markup','Total Value','Submitted','Days Out','Status','GL Sync','Actions'],[
+      tr(['COR-014','JB-0001','Metro Tower','CN-007 / TM-041,040','MEP rerouting floors 8–12 + steel shimming','Design Contingency','$1,315','$600','15%','$2,200','Apr 28',b('2d','g'),b('Submitted','a'),b('⏳ Pending Approval','x'),btn('Edit','')]),
+      tr(['COR-013','JB-0012','Harbor Sch.','CN-006 / TM-039','Foundation soil treatment — engineer directive','Allowance A','$2,108','$5,500','15%','$8,500','Apr 10',b('18d','g'),b('Approved','g'),b('✓ Synced → JE-1180','g'),btn('View JE','')]),
+      tr(['COR-012','JB-0001','Metro Tower','TM-037','Exterior glazing upgrade — owner verbal','Owner Directed','$6,800','$7,200','15%','$15,200','Mar 28',b('30d','a'),b('Approved','g'),b('✓ Synced → JE-1155','g'),btn('View JE','')]),
+      tr(['COR-011','JB-0001','Metro Tower','TM-035,036','Parking structure scope reduction','N/A','-$12,000','$0','','−$15,000','Mar 10',b('48d','a'),b('Approved','g'),b('✓ Synced → JE-1140','g'),btn('View JE','')]),
+      tr(['COR-010','JB-0009','Riverside','Verbal — Site Super','Extra excavation rock layer — no CN issued','Unforeseen Conditions','$1,004','$620','15%','$1,871','—','—',b('Draft','x'),b('Not Submitted','x'),btn('Submit','p"')])
+    ],''))+
+
+  /* Allowance Buckets */
+  cardT('💰 Allowance & Contingency Buckets — Metro Tower',btn('Manage Buckets',''),
+    tbl(['Bucket','Original Budget','CORs Charged','CORs Pending','Remaining Balance','Status'],[
+      tr(['Design Contingency','$25,000','$8,500','$2,200','$14,300',b('On Track','g')]),
+      tr(['Owner Directed Changes','$10,000','$15,200','$0','−$5,200',b('Over Budget','r')]),
+      tr(['Unforeseen Conditions','$15,000','$0','$1,871','$13,129',b('On Track','g')]),
+      tr(['Allowance A (Foundation)','$10,000','$8,500','$0','$1,500',b('Near Limit','a')])
+    ],''));
+};
+
+/* ── RETAINAGE ───────────────────────────────────────── */
+S.ret=function(){
+  return ph('Retainage Tracker','Funds withheld by GCs — tracked per job')+
+  krow([kpi('Total Held','$127,600','','hi'),kpi('Eligible Now','$52,000',['wn','Metro Tower'],''),kpi('Expected This Qtr','$84,200','',''),kpi('Avg. Days Out','61 days','','')])+
+  cardT('Retainage by Job',btn('Send Release Req.','p'),
+    tbl(['Job #','Job','GC','Contract','Ret%','Held','Days','Job Status','Status','GL'],[
+      tr(['JB-0001','Metro Tower','Apex','$1,230,500','8%','$52,000',b('110d','r'),b('90% Done','a'),b('Overdue','r'),glsl('1150')]),
+      tr(['JB-0012','Harbor Sch.','Harbor GC','$840,000','5%','$32,200',b('75d','a'),b('75% Done','b'),b('In Review','b'),glsl('1150')]),
+      tr(['JB-0009','Riverside','Riverside Dev.','$576,000','5%','$28,800',b('30d','x'),b('60% Done','b'),b('On Track','g'),glsl('1150')]),
+      tr(['JB-0015','Oak Park','Oak Park LLC','$292,000','5%','$14,600',b('15d','x'),b('40% Done','b'),b('On Track','g'),glsl('1150')])
+    ]))+
+  krow([kpi('0–30 Days','$14,600','',''),kpi('31–60 Days','$28,800','',''),kpi('61–90 Days','$32,200','',''),kpi('90+ Days','$52,000',['wn','⚠ Action req.'],'hi')])+
+  cardT('Retainage Aging',btn('Export','p')+btn('Send Demand Letters','t'),
+    tbl(['Job #','Job','GC','Ret%','0–30d','31–60d','61–90d','90+ Days','Total','Action'],[
+      tr(['JB-0001','Metro Tower','Apex','8%','—','—','—','<strong style="color:var(--rd)">$52,000</strong>','$52,000',btn('Demand','p')]),
+      tr(['JB-0012','Harbor Sch.','Harbor GC','5%','—','—','<span style="color:var(--am)">$32,200</span>','—','$32,200',btn('Follow Up','')]),
+      tr(['JB-0009','Riverside','Riverside Dev.','5%','—','<span style="color:var(--am)">$28,800</span>','—','—','$28,800',b('Monitor','x')]),
+      tr(['JB-0015','Oak Park','Oak Park LLC','5%','<span style="color:var(--gn)">$14,600</span>','—','—','—','$14,600',b('Current','g')]),
+      ['<tr style="font-weight:700;background:var(--lg)"><td colspan="3">TOTAL</td><td></td><td>$14,600</td><td>$28,800</td><td>$32,200</td><td style="color:var(--rd)">$52,000</td><td>$127,600</td><td></td></tr>']
+    ]));
+};
+
+/* ── ESTIMATES VS ACTUALS ────────────────────────────── */
+S.eva=function(){
+  var projects={
+    'JB-0001':{name:'Metro Tower',gc:'Apex',budget:975000,cost:1012000,status:'r',statusLabel:'Over 8.3%',
+      rows:[['Direct Labor','5000','$280,000','$298,000','+$18,000','r','+6.4%'],['Materials','5100','$380,000','$452,000','+$72,000','r','+18.9%'],['Subcontractors','5200','$220,000','$198,000','-$22,000','g','-10.0%'],['Equipment','5300','$80,000','$64,000','-$16,000','g','-20.0%'],['Insurance (Job)','5400','$10,000','$8,250','-$1,750','g','-17.5%'],['Other Job Costs','5500','$5,000','$4,200','-$800','g','-16.0%']]},
+    'JB-0012':{name:'Harbor Sch.',gc:'Harbor GC',budget:660000,cost:612000,status:'a',statusLabel:'Watch 3.1%',
+      rows:[['Direct Labor','5000','$180,000','$192,000','+$12,000','a','+6.7%'],['Materials','5100','$220,000','$208,000','-$12,000','g','-5.5%'],['Subcontractors','5200','$160,000','$158,000','-$2,000','g','-1.3%'],['Equipment','5300','$60,000','$34,000','-$26,000','g','-43.3%'],['Insurance (Job)','5400','$25,000','$14,000','-$11,000','g','-44.0%'],['Other Job Costs','5500','$15,000','$6,000','-$9,000','g','-60.0%']]},
+    'JB-0009':{name:'Riverside Plaza',gc:'Riverside Dev.',budget:440000,cost:320000,status:'g',statusLabel:'On Budget',
+      rows:[['Direct Labor','5000','$130,000','$98,000','-$32,000','g','-24.6%'],['Materials','5100','$160,000','$122,000','-$38,000','g','-23.8%'],['Subcontractors','5200','$80,000','$68,000','-$12,000','g','-15.0%'],['Equipment','5300','$40,000','$22,000','-$18,000','g','-45.0%'],['Insurance (Job)','5400','$18,000','$7,000','-$11,000','g','-61.1%'],['Other Job Costs','5500','$12,000','$3,000','-$9,000','g','-75.0%']]},
+    'JB-0015':{name:'Oak Park Retail',gc:'Oak Park LLC',budget:235000,cost:112000,status:'g',statusLabel:'Under 3%',
+      rows:[['Direct Labor','5000','$70,000','$35,000','-$35,000','g','-50.0%'],['Materials','5100','$90,000','$42,000','-$48,000','g','-53.3%'],['Subcontractors','5200','$40,000','$20,000','-$20,000','g','-50.0%'],['Equipment','5300','$20,000','$10,000','-$10,000','g','-50.0%'],['Insurance (Job)','5400','$10,000','$3,500','-$6,500','g','-65.0%'],['Other Job Costs','5500','$5,000','$1,500','-$3,500','g','-70.0%']]}
+  };
+  function renderBreakdown(jobId){
+    var p=projects[jobId];
+    if(!p)return'';
+    var rows=p.rows.map(function(r){
+      return tr([r[0],r[1],'$'+parseInt(r[2].replace(/\D/g,'')).toLocaleString(),'$'+parseInt(r[3].replace(/\D/g,'')).toLocaleString(),
+        '<span style="color:var(--'+(r[5]==='r'?'rd':r[5]==='a'?'am':'gn')+')">'+r[4]+'</span>',b(r[6],r[5]),glsl(r[1])]);
+    });
+    var varTotal=p.cost-p.budget;
+    var varPct=((varTotal/p.budget)*100).toFixed(1);
+    rows.push(['<tr style="font-weight:700;background:var(--lg)"><td>TOTAL</td><td></td><td>$'+p.budget.toLocaleString()+'</td><td>$'+p.cost.toLocaleString()+'</td><td style="color:var(--'+(varTotal>0?'rd':'gn')+')">'+( varTotal>0?'+':'')+varTotal.toLocaleString()+'</td><td>'+b((varTotal>0?'+':'')+varPct+'%',varTotal>0?(Math.abs(parseFloat(varPct))>5?'r':'a'):'g')+'</td><td></td></tr>']);
+    return '<div style="font-size:12px;font-weight:600;color:var(--nv);margin:14px 0 8px">'+p.name+' ('+jobId+') — Cost Category Breakdown</div>'+
+      '<div class="cd">'+tbl(['Category','Account','Estimated','Actual','Variance $','Variance %','GL'],rows)+'</div>';
+  }
+  var summaryRows=Object.keys(projects).map(function(id){
+    var p=projects[id];
+    var vAmt=p.cost-p.budget;
+    var vPct=((vAmt/p.budget)*100).toFixed(1);
+    var pctBar='<div style="background:var(--lg);border-radius:3px;height:5px;width:80px;margin-top:3px"><div style="background:var(--'+(vAmt>0?'rd':'gn')+');width:'+Math.min(Math.abs(parseFloat(vPct))*3,100)+'%;height:5px;border-radius:3px"></div></div>';
+    return'<tr class="cl" onclick="evaFilter(\''+id+'\')" style="cursor:pointer">'+
+      '<td><strong>'+id+'</strong></td><td>'+p.name+'</td><td>'+p.gc+'</td>'+
+      '<td>$'+p.budget.toLocaleString()+'</td><td>$'+p.cost.toLocaleString()+'</td>'+
+      '<td style="color:var(--'+(vAmt>0?'rd':'gn')+')">'+( vAmt>0?'+':'')+vAmt.toLocaleString()+'</td>'+
+      '<td>'+b((vAmt>0?'+':'')+vPct+'%',p.status)+pctBar+'</td>'+
+      '<td>'+b(p.statusLabel,p.status)+'</td>'+
+      '<td style="color:var(--bl);font-size:11px">View →</td></tr>';
+  }).join('');
+  return ph('Estimates vs. Actuals','Budget variance across all jobs — click any project to drill in')+
+  krow([kpi('On Budget','2',['up','within 5%'],''),kpi('Over Budget','1 Job',['wn','Metro Tower'],'hi'),kpi('Watch','1 Job',['wn','Harbor Sch.'],''),kpi('Largest Variance','+$72K',['wn','Metro Materials'],'hi')])+
+  '<div class="cd"><div class="ch">All Projects — Summary<div class="ax">'+btn('Export','')+'</div></div>'+
+  '<table><tr><th>Job #</th><th>Job Name</th><th>GC</th><th>Budget</th><th>Cost to Date</th><th>Variance $</th><th>Variance %</th><th>Status</th><th></th></tr>'+
+  summaryRows+'</table></div>'+
+  '<div class="cd"><div class="ch">Cost Category Breakdown'+
+  '<div class="ax"><div class="fl" style="flex-direction:row;align-items:center;gap:8px"><label style="font-size:11px;color:var(--gy)">Filter by project:</label>'+
+  '<select id="eva-select" onchange="evaFilter(this.value)" style="border:1px solid var(--bd);border-radius:4px;padding:4px 8px;font-size:11.5px;background:#fff;cursor:pointer">'+
+  '<option value="all">All Projects</option>'+
+  Object.keys(projects).map(function(id){return'<option value="'+id+'">'+id+' — '+projects[id].name+'</option>';}).join('')+
+  '</select></div></div></div>'+
+  '<div id="eva-detail">'+renderBreakdown('JB-0001')+'</div></div>';
+};
+function evaFilter(id){
+  var projects={
+    'JB-0001':{name:'Metro Tower',gc:'Apex',budget:975000,cost:1012000,status:'r',statusLabel:'Over 8.3%',
+      rows:[['Direct Labor','5000','$280,000','$298,000','+$18,000','r','+6.4%'],['Materials','5100','$380,000','$452,000','+$72,000','r','+18.9%'],['Subcontractors','5200','$220,000','$198,000','-$22,000','g','-10.0%'],['Equipment','5300','$80,000','$64,000','-$16,000','g','-20.0%'],['Insurance (Job)','5400','$10,000','$8,250','-$1,750','g','-17.5%'],['Other Job Costs','5500','$5,000','$4,200','-$800','g','-16.0%']]},
+    'JB-0012':{name:'Harbor Sch.',gc:'Harbor GC',budget:660000,cost:612000,status:'a',statusLabel:'Watch 3.1%',
+      rows:[['Direct Labor','5000','$180,000','$192,000','+$12,000','a','+6.7%'],['Materials','5100','$220,000','$208,000','-$12,000','g','-5.5%'],['Subcontractors','5200','$160,000','$158,000','-$2,000','g','-1.3%'],['Equipment','5300','$60,000','$34,000','-$26,000','g','-43.3%'],['Insurance (Job)','5400','$25,000','$14,000','-$11,000','g','-44.0%'],['Other Job Costs','5500','$15,000','$6,000','-$9,000','g','-60.0%']]},
+    'JB-0009':{name:'Riverside Plaza',gc:'Riverside Dev.',budget:440000,cost:320000,status:'g',statusLabel:'On Budget',
+      rows:[['Direct Labor','5000','$130,000','$98,000','-$32,000','g','-24.6%'],['Materials','5100','$160,000','$122,000','-$38,000','g','-23.8%'],['Subcontractors','5200','$80,000','$68,000','-$12,000','g','-15.0%'],['Equipment','5300','$40,000','$22,000','-$18,000','g','-45.0%'],['Insurance (Job)','5400','$18,000','$7,000','-$11,000','g','-61.1%'],['Other Job Costs','5500','$12,000','$3,000','-$9,000','g','-75.0%']]},
+    'JB-0015':{name:'Oak Park Retail',gc:'Oak Park LLC',budget:235000,cost:112000,status:'g',statusLabel:'Under 3%',
+      rows:[['Direct Labor','5000','$70,000','$35,000','-$35,000','g','-50.0%'],['Materials','5100','$90,000','$42,000','-$48,000','g','-53.3%'],['Subcontractors','5200','$40,000','$20,000','-$20,000','g','-50.0%'],['Equipment','5300','$20,000','$10,000','-$10,000','g','-50.0%'],['Insurance (Job)','5400','$10,000','$3,500','-$6,500','g','-65.0%'],['Other Job Costs','5500','$5,000','$1,500','-$3,500','g','-70.0%']]}
+  };
+  var sel=document.getElementById('eva-select');
+  var detail=document.getElementById('eva-detail');
+  if(!detail)return;
+  if(sel&&id!=='trigger')sel.value=id;
+  if(id==='all'){detail.innerHTML='<div style="padding:20px;text-align:center;color:var(--gy);font-size:12px">Select a project above to view the cost category breakdown.</div>';return;}
+  var p=projects[id];if(!p)return;
+  var filterIcon='<svg style="width:9px;height:9px;margin-left:4px;opacity:.35;cursor:pointer;vertical-align:middle" viewBox="0 0 10 10"><path d="M0 1.5h10L6.2 5.8V9L3.8 7.8V5.8L0 1.5z" fill="currentColor"/></svg>';
+  var rows=p.rows.map(function(r){
+    var vAmt='<span style="color:var(--'+(r[5]==='r'?'rd':r[5]==='a'?'am':'gn')+')">'+r[4]+'</span>';
+    return'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>$'+parseInt(r[2].replace(/\D/g,'')).toLocaleString()+'</td><td>$'+parseInt(r[3].replace(/\D/g,'')).toLocaleString()+'</td><td>'+vAmt+'</td><td><span class="b b'+r[5]+'">'+r[6]+'</span></td><td><span class="sl" onclick="glD(\''+r[1]+'\')">'+r[1]+'</span></td></tr>';
+  });
+  var varTotal=p.cost-p.budget;var varPct=((varTotal/p.budget)*100).toFixed(1);
+  rows.push('<tr style="font-weight:700;background:var(--lg)"><td>TOTAL</td><td></td><td>$'+p.budget.toLocaleString()+'</td><td>$'+p.cost.toLocaleString()+'</td><td style="color:var(--'+(varTotal>0?'rd':'gn')+')">'+( varTotal>0?'+':'')+varTotal.toLocaleString()+'</td><td><span class="b b'+(varTotal>0?(Math.abs(parseFloat(varPct))>5?'r':'a'):'g')+'">'+(varTotal>0?'+':'')+varPct+'%</span></td><td></td></tr>');
+  detail.innerHTML='<table><tr><th>Category'+filterIcon+'</th><th>Account'+filterIcon+'</th><th>Estimated'+filterIcon+'</th><th>Actual'+filterIcon+'</th><th>Variance $'+filterIcon+'</th><th>Variance %'+filterIcon+'</th><th>GL</th></tr>'+rows.join('')+'</table>';
+}
+
+/* ── RETAINAGE AGING ─────────────────────────────────── */
+S.rag=function(){
+  return ph('Retainage Aging Report','April 30, 2026')+
+  krow([kpi('0–30 Days','$14,600','',''),kpi('31–60 Days','$28,800','',''),kpi('61–90 Days','$32,200','',''),kpi('90+ Days','$52,000',['wn','⚠ Action req.'],'hi')])+
+  cardT('Retainage Aging',btn('Export','p')+btn('Send Demand Letters','t'),
+    tbl(['Job #','Job','GC','Ret%','0–30d','31–60d','61–90d','90+ Days','Total','Action'],[
+      tr(['JB-0001','Metro Tower','Apex','8%','—','—','—','<strong style="color:var(--rd)">$52,000</strong>','$52,000',btn('Demand','p')]),
+      tr(['JB-0012','Harbor Sch.','Harbor GC','5%','—','—','<span style="color:var(--am)">$32,200</span>','—','$32,200',btn('Follow Up','')]),
+      tr(['JB-0009','Riverside','Riverside Dev.','5%','—','<span style="color:var(--am)">$28,800</span>','—','—','$28,800',b('Monitor','x')]),
+      tr(['JB-0015','Oak Park','Oak Park LLC','5%','<span style="color:var(--gn)">$14,600</span>','—','—','—','$14,600',b('Current','g')]),
+      ['<tr style="font-weight:700;background:var(--lg)"><td colspan="3">TOTAL</td><td></td><td>$14,600</td><td>$28,800</td><td>$32,200</td><td style="color:var(--rd)">$52,000</td><td>$127,600</td><td></td></tr>']
+    ]));
+};
+
+/* ── COMPLIANCE HUB (Constrafor integration) ─────────── */
+S.coh=function(){
+  return ph('COI Tracker','Certificate of Insurance — powered by Constrafor COI module')+
+  al('★ Integrated with <strong>Constrafor</strong>\'s existing COI management module. Real-time alerts when sub COI expires — payments are auto-held until renewed.','ok')+
+  krow([kpi('Active Certs','18','',''),kpi('Expiring &lt;30 Days','2',['wn','Action needed'],'hi'),kpi('Expired','1',['dn','Steel Fab'],'hi'),kpi('Auto-Holds Active','1',['wn','Pmt blocked'],'hi')])+
+  cardT('COI & Insurance Tracker',btn('+ Add Certificate','p')+btn('Open Constrafor →','t'),
+    tbl(['Entity','Vendor #','Type','Coverage','Expires','Job #','Status','Payment Hold','Action'],[
+      tr(['Metro Sub LLC (Us)','—','Gen. Liability','$2M/$4M','Dec 31, 26','All',b('✓ Active','g'),'—','—']),
+      tr(['Travelers Ins.','VND-0018','Workers Comp','Statutory','May 2, 26','JB-0001',b('⚠ Expiring','a'),'None — 30d warning',btn('Renew','p')]),
+      tr(['City Electric Co.','VND-0044','Sub COI','$1M/$2M','May 15, 26','JB-0012',b('⚠ Expiring','a'),b('⚠ Hold on expiry','a'),btn('Request COI','p')]),
+      tr(['Steel Fab Inc.','VND-0067','Sub COI','$1M/$2M','Mar 31, 26','JB-0001',b('🚨 Expired','r'),b('🚨 Pmt Blocked','r'),btn('Unblock','r')]),
+      tr(['FastConcrete','VND-0031','Sub COI','$1M/$2M','Dec 31, 26','JB-0009',b('✓ Active','g'),'—','—'])
+    ]));
+};
+
+S.sc=function(){
+  return ph('Sub Compliance','Lien waivers, compliance documents, and sub-tier tracking')+
+  krow([kpi('Active Subs','8','',''),kpi('Lien Waivers Due','3',['wn','Before payment'],'hi'),kpi('Sub Retainage Held','$34,200','',''),kpi('Compliance Issues','2',['dn','COI expired'],'hi')])+
+  cardT('Sub Compliance Register',btn('+ New Sub','p'),
+    tbl(['Sub#','Subcontractor','Vendor #','Job #','Trade','Contract','Ret Held','COI','Lien Waiver','Compliance'],[
+      tr(['SUB-12','FastConcrete LLC','VND-0031','JB-0009','Concrete','$68,000','$3,400',b('✓ Current','g'),b('Received','g'),b('OK','g')]),
+      tr(['SUB-11','City Electric Co.','VND-0044','JB-0012','Electrical','$24,200','$1,210',b('⚠ Expiring','a'),b('Pending','a'),b('Action Req.','a')]),
+      tr(['SUB-09','Steel Fab Inc.','VND-0067','JB-0001','Steel','$44,000','$15,400',b('🚨 Expired','r'),b('Received','g'),b('Hold','r')])
+    ]));
+};
+
+S.cpr=function(){
+  return ph('Certified Payroll — WH-347','Auto-generated from payroll module')+
+  al('WH-347 auto-generated from timecard data via ADP integration. Print or submit electronically.','ok')+
+  krow([kpi('Period','Wk 17 Apr 21–27','',''),kpi('Project','Metro Tower','',''),kpi('Contract #','BLD-2026-0441','',''),kpi('Status',b('Ready to Submit','g'),'','')])+
+  cardT('WH-347 Certified Payroll',btn('Generate PDF','p')+btn('Submit Online','t'),
+    tbl(['Employee','Last 4 SSN','Work Class','Trade #','Hrs','Reg. Rate','OT Rate','Gross','Fringe','Net'],[
+      tr(['D. Kim','••7821','Foreman','TR-001','44','$52.80','$79.20','$2,323','$809','$1,514']),
+      tr(['M. Lopez','••4412','Iron Worker','TR-004','40','$48.60','$72.90','$1,944','$648','$1,296']),
+      tr(['T. Brown','••9934','Electrician','TR-007','48','$54.20','$81.30','$2,601','$950','$1,651']),
+      tr(['J. Patel','••2218','Laborer','TR-002','40','$38.40','$57.60','$1,536','$512','$1,024'])
+    ]));
+};
+
+S.pay=function(){
+  return ph('Payroll','ADP integration or CSV import — trade/position codes for prevailing wage')+
+  al('Import from ADP via direct integration, or upload Excel/CSV. Overhead employees map to job code "JB-0000 — Overhead."','i')+
+  krow([kpi('Gross Payroll (Wk 17)','$24,100','',''),kpi('Workers','14','',''),kpi('Prevailing Wage Jobs','3',['wn','Davis-Bacon'],''),kpi('Union Employees','6','','')])+
+  cardT('Timecard Entry — Week 17',btn('Import from ADP','')+btn('Upload CSV','')+btn('Process Payroll','g'),
+    tbl(['Employee','Trade #','Job #','Reg. Hrs','OT Hrs','Prev. Wage','Fringe','Gross','GL — Labor','Status'],[
+      tr(['D. Kim','TR-001 Foreman','JB-0001','40','4','$52.80','$18.40','$2,323',glsl('5000'),b('Ready','g')]),
+      tr(['M. Lopez','TR-004 Iron Worker','JB-0001','40','0','$48.60','$16.20','$1,944',glsl('5000'),b('Ready','g')]),
+      tr(['T. Brown','TR-007 Electrician','JB-0012','40','8','$54.20','$19.80','$2,601',glsl('5000'),b('Ready','g')]),
+      tr(['J. Patel','TR-002 Laborer','JB-0009','40','0','$38.40','$12.80','$1,536',glsl('5000'),b('Review','a')]),
+      tr(['R. Smith','TR-010 Admin','JB-0000 Overhead','40','0','$32.00','$0','$1,280',glsl('6000'),b('Ready','g')])
+    ]));
+};
+
+S.set=function(){
+  return ph('Settings','Company, integrations, and AI preferences')+
+  two(
+    card('Company Info','',fg([['Company Name','Metro Sub LLC',1],['EIN','XX-XXXXXXX',0],['Fiscal Year','January',1],['Accounting Method','Accrual',1],['Default Retainage %','8%',1],['WIP % Method','Cost-to-Cost (ASC 606)',1]])),
+    card('Account Control','',
+      '<div class="al i" style="margin-bottom:10px">Users cannot create GL accounts directly. All requests go through support to ensure correct debit/credit mapping.</div>'+
+      fg([['New Account Requests','Via support ticket',1],['Auto-post threshold','≥ 90% confidence',1],['Review queue for','70–89%',1],['Email inbox scan','✓ Active',1],['Bank sync','✓ Real-time',1],['COI expiry alerts','30 days prior (Constrafor)',1]]))
+  )+
+  card('Master Data',btn('Export Vendor List',''),
+    '<div style="font-size:12px;color:var(--gy);margin-bottom:10px">Vendor numbers and job numbers are required on all transactions to prevent duplicate entries.</div>'+
+    tbl(['Type','Count','Last Updated','Note'],[
+      tr(['Vendor Master','67 vendors','Apr 28','Unique IDs: VND-XXXX']),
+      tr(['Job Register','14 jobs','Apr 25','Unique IDs: JB-XXXX']),
+      tr(['Customer List','12 GCs','Apr 20','Unique IDs: CUS-XXXX']),
+      tr(['Employee List','18 workers','Apr 27','Trade codes: TR-XXX'])
+    ]));
+};
+
+go(document.querySelector('[onclick="go(this,\'dash\')"]'),'dash');
+</script></body></html>
