@@ -171,9 +171,7 @@
       <div class="filter-group">
         <label class="filter-label">Date range</label>
         <select class="filter-input">
-          <option id="date-range-default" selected>12/28/2025 - 06/28/2026</option>
-          <option>05/04/2026 - 06/28/2026 (Forecast only)</option>
-          <option>Last 6 biweeks (History only)</option>
+          <option id="date-range-default" selected>05/04/2026 - 06/28/2026</option>
         </select>
       </div>
     </div>
@@ -183,7 +181,6 @@
       <div class="chart-header">
         <div class="chart-title">Cash balance forecast</div>
         <div class="chart-legend">
-          <span class="legend-dot" style="--legend-color:#9aa0a6">Historical</span>
           <span class="legend-dot" style="--legend-color:#34a853">Forecast</span>
           <span class="legend-dot" style="--legend-color:rgba(52,168,83,0.18)">Confidence band</span>
         </div>
@@ -207,6 +204,32 @@
     <!-- Per-entity breakdown -->
     <h2 class="section-title">Per-entity breakdown</h2>
     <div class="entity-grid" id="entity-grid"></div>
+
+    <!-- Backtest section (model accuracy) -->
+    <h2 class="section-title" style="margin-top:32px">Model accuracy</h2>
+    <div class="row" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:14px">
+      <div class="card">
+        <div class="kpi-label">MASE Score</div>
+        <div class="kpi-value kpi-pos" id="bt-mase">0.19</div>
+        <div class="kpi-sub">vs naive forecast (lower = better; <1.0 means better than naive)</div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">Test Period</div>
+        <div class="kpi-value" style="font-size:18px">5 biweeks</div>
+        <div class="kpi-sub">Jan 11 - Mar 21, 2026 (holdout)</div>
+      </div>
+    </div>
+
+    <div class="card chart-card" style="margin-bottom:24px">
+      <div class="chart-header">
+        <div class="chart-title">Backtest · Actual vs Forecast</div>
+        <div class="chart-legend">
+          <span class="legend-dot" style="--legend-color:#1a1d23">Actual</span>
+          <span class="legend-dot" style="--legend-color:#34a853">Forecast</span>
+        </div>
+      </div>
+      <div class="chart-body" style="height:300px"><canvas id="backtestChart"></canvas></div>
+    </div>
 
   </main>
 
@@ -595,7 +618,39 @@ const DATA = {
       "other_oh": 2511355.6,
       "delta": 6146445.63
     }
-  ]
+  ],
+  "backtest": {
+    "dates": [
+      "2026-01-11",
+      "2026-01-25",
+      "2026-02-08",
+      "2026-02-22",
+      "2026-03-08"
+    ],
+    "labels": [
+      "BW 1\nJan 11-24",
+      "BW 2\nJan 25-Feb 07",
+      "BW 3\nFeb 08-21",
+      "BW 4\nFeb 22-Mar 07",
+      "BW 5\nMar 08-21*"
+    ],
+    "actual_net": [
+      22008930.83,
+      -3244052.5,
+      4911903.62,
+      19924568.65,
+      -28198711.81
+    ],
+    "forecast_net": [
+      21146015.25371416,
+      2735051.2570719677,
+      4321535.5010390505,
+      11949904.898502707,
+      -20615740.28823547
+    ],
+    "mae": 4598004.545116114,
+    "mase": 0.1905022538676657
+  }
 };
 
 // Currency formatters
@@ -625,25 +680,8 @@ document.getElementById("kpi-bal").textContent = fmtMoneyM(DATA.bu.balance[4]);
 document.getElementById("kpi-ar").textContent = fmtMoneyM(arTotal);
 document.getElementById("kpi-out").textContent = "−" + fmtMoneyM(outTotal).replace("−","");
 
-// ── Build chart data ───────────────────────────────────────────────
-function shiftDate(yyyymmdd, days){
-  const d = new Date(yyyymmdd + "T00:00:00");
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0,10);
-}
-
-// Historical balance series — work backward from $15M anchor at forecast start
-const histTail = DATA.history.slice(-6);
-let bal = DATA.opening_balance;
-const histBalances = [];
-for (let i = histTail.length - 1; i >= 0; i--) {
-  histBalances.unshift(bal);
-  bal = bal - histTail[i].delta;
-}
-const histPoints = histTail.map((h,i) => ({x: h.date, y: histBalances[i] + h.delta}));
-histPoints.unshift({x: shiftDate(histTail[0].date, -14), y: histBalances[0]});
-
-// Forecast points (Bottom Up)
+// ── Build chart data (forecast period only) ───────────────────────
+// Forecast x-axis: opening balance anchor + 4 biweek end points
 const fcDates = ["2026-05-04","2026-05-18","2026-06-01","2026-06-15","2026-06-29"];
 const buPoints = DATA.bu.balance.map((b,i)=>({x: fcDates[i], y: b}));
 
@@ -664,17 +702,15 @@ const buBand = confBand(DATA.bu.balance);
 const buUpper = buBand.upper.map((y,i)=>({x: fcDates[i], y}));
 const buLower = buBand.lower.map((y,i)=>({x: fcDates[i], y}));
 
-const allLabels = [...histPoints.map(p=>p.x), ...fcDates];
+const allLabels = fcDates;
 
-// Compute the displayed date range, set into the dropdown so it matches the chart x-axis
-const startLabel = histPoints[0].x;
-const endLabel = fcDates[fcDates.length-1];
+// Set the date-range dropdown to the forecast window
 function fmtUS(s){
   const [y,m,d] = s.split("-");
   return `${m}/${d}/${y}`;
 }
 document.getElementById("date-range-default").textContent =
-  `${fmtUS(startLabel)} - ${fmtUS(endLabel)}`;
+  `${fmtUS(fcDates[0])} - ${fmtUS(fcDates[fcDates.length-1])}`;
 
 // ── Render chart ───────────────────────────────────────────────────
 const ctx = document.getElementById("forecastChart").getContext("2d");
@@ -685,7 +721,7 @@ const chart = new Chart(ctx, {
     datasets:[
       {
         label:"Confidence-upper",
-        data:[...histPoints.map(p=>({x:p.x,y:null})), ...buUpper],
+        data: buUpper,
         borderColor:"transparent",
         backgroundColor:"rgba(52,168,83,0.14)",
         pointRadius:0,
@@ -695,7 +731,7 @@ const chart = new Chart(ctx, {
       },
       {
         label:"Confidence-lower",
-        data:[...histPoints.map(p=>({x:p.x,y:null})), ...buLower],
+        data: buLower,
         borderColor:"transparent",
         backgroundColor:"transparent",
         pointRadius:0,
@@ -704,21 +740,8 @@ const chart = new Chart(ctx, {
         order:5,
       },
       {
-        label:"Historical",
-        data: histPoints,
-        borderColor:"#9aa0a6",
-        backgroundColor:"#9aa0a6",
-        pointRadius:3,
-        pointHoverRadius:5,
-        tension:0.3,
-        order:2,
-      },
-      {
         label:"Forecast",
-        data:[
-          {x: histPoints[histPoints.length-1].x, y: histPoints[histPoints.length-1].y},
-          ...buPoints
-        ],
+        data: buPoints,
         borderColor:"#34a853",
         backgroundColor:"#34a853",
         borderDash:[6,4],
@@ -809,6 +832,77 @@ function renderTable(data, container){
     <tbody>${rows.join("")}</tbody></table>`;
 }
 renderTable(DATA.bu, document.getElementById("table-bu"));
+
+// ── Backtest chart ────────────────────────────────────────────────
+if (DATA.backtest) {
+  document.getElementById("bt-mase").textContent = DATA.backtest.mase.toFixed(2);
+
+  const btCtx = document.getElementById("backtestChart").getContext("2d");
+  const btLabels = DATA.backtest.labels;
+  new Chart(btCtx, {
+    type:"line",
+    data:{
+      labels: btLabels,
+      datasets:[
+        {
+          label:"Actual",
+          data: DATA.backtest.actual_net,
+          borderColor:"#1a1d23",
+          backgroundColor:"#1a1d23",
+          pointRadius:5,
+          pointHoverRadius:7,
+          tension:0.25,
+          borderWidth:2.5,
+        },
+        {
+          label:"Forecast",
+          data: DATA.backtest.forecast_net,
+          borderColor:"#34a853",
+          backgroundColor:"#34a853",
+          borderDash:[6,4],
+          pointRadius:5,
+          pointHoverRadius:7,
+          tension:0.25,
+          borderWidth:2.5,
+        },
+      ],
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{intersect:false,mode:"nearest",axis:"x"},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:"#1a1d23",
+          titleFont:{size:12,weight:"600"},
+          bodyFont:{size:13},
+          padding:12,
+          cornerRadius:8,
+          callbacks:{
+            label: ctx => `${ctx.dataset.label}: ${fmtMoney(ctx.parsed.y)}`
+          }
+        },
+      },
+      scales:{
+        x:{
+          type:"category",
+          grid:{display:false},
+          ticks:{color:"#9aa0a6",font:{size:11},maxRotation:0,
+            callback:function(v){
+              const lbl = this.getLabelForValue(v);
+              return lbl.split("\n")[1] || lbl;
+            }},
+        },
+        y:{
+          grid:{color:"#eef0f3"},
+          ticks:{color:"#9aa0a6",font:{size:11},
+            callback:v => (v>=0?"+":"−") + "$" + Math.abs(v/1e6).toFixed(0)+"M"},
+        },
+      },
+    }
+  });
+}
 
 // ── Per-entity cards ──────────────────────────────────────────────
 const entityNames = {EE:"E-J Engineering",EJ:"E-J Electric",EN:"E-J Energy",NE:"NE",RI:"Rossi",TD:"TD"};
