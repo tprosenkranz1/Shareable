@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>E-J Group · Cash Flow Forecast</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f7f8fa;
+    --card:#ffffff;
+    --border:#e6e8ec;
+    --text:#1a1d23;
+    --muted:#6b7280;
+    --muted-2:#9aa0a6;
+    --accent:#3478f6;
+    --accent-soft:#e8f0fe;
+    --accent-2:#34a853;
+    --warn:#f59e0b;
+    --danger:#dc2626;
+    --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+    --shadow-lg:0 4px 14px rgba(16,24,40,.08);
+    --radius:10px;
+    --sidebar-w:228px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--text);font-size:14px;line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .layout{display:flex;min-height:100vh}
+  .sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);padding:20px 14px;flex-shrink:0}
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px;margin-bottom:24px;font-weight:600;font-size:15px}
+  .brand-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#3478f6,#5e9bff);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px}
+  .nav{display:flex;flex-direction:column;gap:2px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;cursor:pointer}
+  .nav-item:hover{background:#f1f3f5;color:var(--text)}
+  .nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .nav-icon{width:16px;height:16px;display:inline-block;background:currentColor;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;opacity:.85}
+  .icon-home{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><path d='M3 12l9-9 9 9v9a2 2 0 01-2 2h-4v-7H9v7H5a2 2 0 01-2-2v-9z'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><path d='M3 12l9-9 9 9v9a2 2 0 01-2 2h-4v-7H9v7H5a2 2 0 01-2-2v-9z'/></svg>")}
+  .icon-chart{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><line x1='4' y1='20' x2='20' y2='20'/><polyline points='4,16 9,11 13,14 20,7'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><line x1='4' y1='20' x2='20' y2='20'/><polyline points='4,16 9,11 13,14 20,7'/></svg>")}
+  .icon-list{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><line x1='8' y1='6' x2='21' y2='6'/><line x1='8' y1='12' x2='21' y2='12'/><line x1='8' y1='18' x2='21' y2='18'/><circle cx='4' cy='6' r='1.2'/><circle cx='4' cy='12' r='1.2'/><circle cx='4' cy='18' r='1.2'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><line x1='8' y1='6' x2='21' y2='6'/><line x1='8' y1='12' x2='21' y2='12'/><line x1='8' y1='18' x2='21' y2='18'/><circle cx='4' cy='6' r='1.2'/><circle cx='4' cy='12' r='1.2'/><circle cx='4' cy='18' r='1.2'/></svg>")}
+  .icon-bill{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><rect x='3' y='4' width='18' height='16' rx='2'/><line x1='7' y1='9' x2='17' y2='9'/><line x1='7' y1='13' x2='17' y2='13'/><line x1='7' y1='17' x2='13' y2='17'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><rect x='3' y='4' width='18' height='16' rx='2'/><line x1='7' y1='9' x2='17' y2='9'/><line x1='7' y1='13' x2='17' y2='13'/><line x1='7' y1='17' x2='13' y2='17'/></svg>")}
+  .icon-folder{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><path d='M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><path d='M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z'/></svg>")}
+  .icon-cube{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><path d='M12 2L3 7l9 5 9-5-9-5zM3 7v10l9 5V12M21 7v10l-9 5'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><path d='M12 2L3 7l9 5 9-5-9-5zM3 7v10l9 5V12M21 7v10l-9 5'/></svg>")}
+  .icon-users{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><path d='M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><path d='M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75'/></svg>")}
+  .main{flex:1;padding:28px 36px 60px;max-width:1340px}
+  .topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:24px;flex-wrap:wrap}
+  .topbar-left h1{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+  .opening-balance{font-size:30px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+  .opening-balance .currency{color:var(--muted);font-weight:500;margin-right:4px}
+  .topbar-right{display:flex;gap:8px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+  .btn:hover{background:#f6f7f9}
+  .btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn-primary:hover{background:#2a64d4}
+  .section-title{font-size:20px;font-weight:600;margin-bottom:16px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:24px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+  .kpi-label{font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+  .kpi-value{font-size:24px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+  .kpi-sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .kpi-pos{color:var(--accent-2)}
+  .kpi-neg{color:var(--danger)}
+  .filter-bar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:14px;box-shadow:var(--shadow);flex-wrap:wrap}
+  .filter-group{display:flex;flex-direction:column;gap:4px;min-width:180px}
+  .filter-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+  .filter-input{padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;background:#fff;color:var(--text);min-width:180px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'><polyline points='6,9 12,15 18,9'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:14px;padding-right:32px}
+  .chart-card{padding:0;overflow:hidden}
+  .chart-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+  .chart-title{font-size:16px;font-weight:600;letter-spacing:-.005em}
+  .chart-legend{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--muted)}
+  .legend-dot{display:inline-flex;align-items:center;gap:6px}
+  .legend-dot::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--legend-color)}
+  .chart-body{padding:18px 22px 14px;height:380px;position:relative}
+  .last-updated{font-size:12px;color:var(--muted);padding:10px 22px 18px;display:flex;justify-content:space-between;align-items:center}
+  .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent-2);margin-right:6px;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:right;padding:12px 14px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border);background:#fafbfc}
+  th:first-child{text-align:left}
+  td{padding:12px 14px;text-align:right;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
+  td:first-child{text-align:left;font-weight:500}
+  tr.section-row td{background:#f8f9fb;font-weight:600;color:var(--muted);text-transform:uppercase;font-size:11px;letter-spacing:.04em;padding-top:14px;padding-bottom:8px}
+  tr.indent td:first-child{padding-left:30px;font-weight:400;color:var(--text)}
+  tr.total td{font-weight:600;background:#fbfcfe}
+  tr.closing td{font-weight:700;background:#eaf2fe;color:#1c4ec1;font-size:14px}
+  tr.opening td{font-weight:600;background:#f8f9fb;color:var(--muted)}
+  tr.net td{font-weight:600}
+  .pos{color:var(--accent-2)}
+  .neg{color:var(--danger)}
+  .entity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .entity-card{padding:18px}
+  .entity-card h3{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+  .entity-net{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+  .entity-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+  .entity-bars{display:flex;flex-direction:column;gap:6px}
+  .entity-bar-row{display:grid;grid-template-columns:60px 1fr 80px;align-items:center;gap:10px;font-size:12px}
+  .entity-bar-row .label{color:var(--muted)}
+  .entity-bar-row .value{text-align:right;font-variant-numeric:tabular-nums;color:var(--text)}
+  .entity-bar{height:6px;background:#eef0f3;border-radius:3px;overflow:hidden;position:relative}
+  .entity-bar-fill{height:100%;border-radius:3px;transition:width .4s}
+  @media(max-width:880px){.sidebar{display:none}.main{padding:18px}}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">EJ</div>
+      E-J Group
+    </div>
+    <nav class="nav">
+      <a class="nav-item"><span class="nav-icon icon-home"></span>Onboarding</a>
+      <a class="nav-item active"><span class="nav-icon icon-chart"></span>Daily cash report</a>
+      <a class="nav-item"><span class="nav-icon icon-list"></span>Transactions</a>
+      <a class="nav-item"><span class="nav-icon icon-bill"></span>Billing</a>
+      <a class="nav-item"><span class="nav-icon icon-folder"></span>Job cost</a>
+      <a class="nav-item"><span class="nav-icon icon-cube"></span>Materials</a>
+      <a class="nav-item"><span class="nav-icon icon-users"></span>Payroll</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Total bank balance</h1>
+        <div class="opening-balance"><span class="currency">$</span><span id="opening-balance-display">15,000,000.00</span></div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn">Integrations</button>
+        <button class="btn btn-primary">Download</button>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="row">
+      <div class="card">
+        <div class="kpi-label">4-BW Net Change</div>
+        <div class="kpi-value kpi-pos" id="kpi-net">+$32.52M</div>
+        <div class="kpi-sub">Operating cash flow</div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">Closing Balance · BW 4</div>
+        <div class="kpi-value" id="kpi-bal">$47.52M</div>
+        <div class="kpi-sub">Projected end of Jun 28</div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">AR Inflow (4-BW)</div>
+        <div class="kpi-value" id="kpi-ar">$163.52M</div>
+        <div class="kpi-sub">EXANTR + model blend (70/30)</div>
+      </div>
+      <div class="card">
+        <div class="kpi-label">Outflows (4-BW)</div>
+        <div class="kpi-value kpi-neg" id="kpi-out">−$131.00M</div>
+        <div class="kpi-sub">AP + Tax + Payroll + Other</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Cash flow</h2>
+
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label class="filter-label">Account</label>
+        <select class="filter-input"><option>E-J Parent</option><option>EE</option><option>EJ</option><option>EN</option><option>NE</option><option>RI</option><option>TD</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Date range</label>
+        <select class="filter-input">
+          <option id="date-range-default" selected>12/28/2025 - 06/28/2026</option>
+          <option>05/04/2026 - 06/28/2026 (Forecast only)</option>
+          <option>Last 6 biweeks (History only)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card chart-card" style="margin-bottom:24px">
+      <div class="chart-header">
+        <div class="chart-title">Cash balance forecast</div>
+        <div class="chart-legend">
+          <span class="legend-dot" style="--legend-color:#9aa0a6">Historical</span>
+          <span class="legend-dot" style="--legend-color:#34a853">Forecast</span>
+          <span class="legend-dot" style="--legend-color:rgba(52,168,83,0.18)">Confidence band</span>
+        </div>
+      </div>
+      <div class="chart-body"><canvas id="forecastChart"></canvas></div>
+      <div class="last-updated">
+        <span><span class="pulse"></span>Last updated: just now</span>
+        <span id="hover-detail">Hover the chart for biweek detail</span>
+      </div>
+    </div>
+
+    <!-- Component breakdown table -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="chart-header">
+        <div class="chart-title">Forecast breakdown</div>
+        <div style="font-size:12px;color:var(--muted)">By biweek · 4 components</div>
+      </div>
+      <div id="table-bu"></div>
+    </div>
+
+    <!-- Per-entity breakdown -->
+    <h2 class="section-title">Per-entity breakdown</h2>
+    <div class="entity-grid" id="entity-grid"></div>
+
+  </main>
+
+</div>
+
+<script>
+const DATA = {
+  "opening_balance": 15000000,
+  "forecast_start_date": "2026-05-04",
+  "biweeks": [
+    {
+      "label": "BW 1",
+      "range": "May 04 - May 17",
+      "short": "May 04"
+    },
+    {
+      "label": "BW 2",
+      "range": "May 18 - May 31",
+      "short": "May 18"
+    },
+    {
+      "label": "BW 3",
+      "range": "Jun 01 - Jun 14",
+      "short": "Jun 01"
+    },
+    {
+      "label": "BW 4",
+      "range": "Jun 15 - Jun 28",
+      "short": "Jun 15"
+    }
+  ],
+  "td": {
+    "ar": [
+      47436854.01683696,
+      37416495.17177418,
+      38338074.14045005,
+      40326406.12310298
+    ],
+    "ap": [
+      20071083.56895225,
+      18652251.5227749,
+      18358023.05884252,
+      15997972.54011702
+    ],
+    "tax": [
+      5579516.27806301,
+      5262035.208622193,
+      14054992.23376677,
+      3594721.342937384
+    ],
+    "payroll": [
+      10497623.03824987,
+      6319804.750382191,
+      7471149.371171826,
+      6751304.901725302
+    ],
+    "other_oh": [
+      674405.4436015493,
+      2499908.551095798,
+      674924.4099485053,
+      2500063.298545737
+    ],
+    "net": [
+      10614225.687970283,
+      4682495.138899095,
+      -2221014.9332795693,
+      11482344.039777536
+    ],
+    "balance": [
+      15000000,
+      25614225.68797028,
+      30296720.826869376,
+      28075705.893589806,
+      39558049.93336734
+    ]
+  },
+  "bu": {
+    "ar": [
+      47436854.01683696,
+      37416495.17177418,
+      38338074.14045005,
+      40326406.12310298
+    ],
+    "ap": [
+      18279216.12520169,
+      16609717.51123321,
+      16577854.80553427,
+      14159221.9995041
+    ],
+    "tax": [
+      5864838.569299803,
+      5372196.825074016,
+      13883995.56763888,
+      3797298.124661553
+    ],
+    "payroll": [
+      9417382.184587719,
+      6681329.482377809,
+      7338756.919298167,
+      6764742.169137471
+    ],
+    "other_oh": [
+      700363.4313825227,
+      2427008.664802752,
+      722071.170024626,
+      2404345.920119287
+    ],
+    "net": [
+      13175053.70636523,
+      6326242.68828639,
+      -184604.32204588968,
+      13200797.909680566
+    ],
+    "balance": [
+      15000000,
+      28175053.706365228,
+      34501296.39465162,
+      34316692.07260573,
+      47517489.9822863
+    ]
+  },
+  "entities": {
+    "EE": {
+      "ar": [
+        2075249.99888317,
+        1636883.034778748,
+        1677199.931701055,
+        1764184.746151762
+      ],
+      "ap": [
+        448252.5444773407,
+        416565.4124547923,
+        411808.9505394734,
+        357286.7340694563
+      ],
+      "tax": [
+        238491.9723490505,
+        220051.1806380734,
+        572227.7156673849,
+        153343.0870308979
+      ],
+      "payroll": [
+        579694.2350856593,
+        385348.0605148548,
+        429878.7407492911,
+        396691.6983410241
+      ],
+      "other_oh": [
+        23476.66936741494,
+        57800.05511511438,
+        20310.57029482319,
+        58747.98445230605
+      ]
+    },
+    "EJ": {
+      "ar": [
+        33772038.77884018,
+        26638177.25899231,
+        27294283.17733247,
+        28709849.74925414
+      ],
+      "ap": [
+        15291321.73958453,
+        14156683.36973272,
+        13804701.80263855,
+        12052247.7557019
+      ],
+      "tax": [
+        4272317.900622123,
+        3874602.893561775,
+        10040224.11977286,
+        2737633.013847785
+      ],
+      "payroll": [
+        5915852.133982544,
+        4218999.147720866,
+        4636057.068283807,
+        4214959.329397117
+      ],
+      "other_oh": [
+        424805.5794842835,
+        1511350.867877598,
+        447038.173128369,
+        1506535.201217476
+      ]
+    },
+    "EN": {
+      "ar": [
+        2994015.048735459,
+        2361572.071694886,
+        2419738.266692436,
+        2545233.432873396
+      ],
+      "ap": [
+        217778.2193222757,
+        201308.0984547676,
+        196911.338945603,
+        171031.2999645689
+      ],
+      "tax": [
+        306255.0080112885,
+        289632.8761324575,
+        749828.9993221217,
+        210375.3453846396
+      ],
+      "payroll": [
+        520840.1331948654,
+        354567.6628359522,
+        389750.8544322357,
+        373016.4589363507
+      ],
+      "other_oh": [
+        55505.80858322038,
+        138004.6896637702,
+        49338.79451354478,
+        140193.7082442206
+      ]
+    },
+    "NE": {
+      "ar": [
+        1276171.086995737,
+        1006598.146200541,
+        1031390.946199252,
+        1084882.09438353
+      ],
+      "ap": [
+        233042.6968404304,
+        219353.3918019369,
+        220262.2141814529,
+        185750.343369361
+      ],
+      "tax": [
+        153894.1540802518,
+        149657.5585417769,
+        375429.1530235222,
+        105509.1406402945
+      ],
+      "payroll": [
+        226410.192118413,
+        174160.9472056035,
+        168712.8470130957,
+        142934.5527179094
+      ],
+      "other_oh": [
+        24244.6295699541,
+        115219.7475788654,
+        24088.97007092343,
+        112920.5210124976
+      ]
+    },
+    "RI": {
+      "ar": [
+        3359628.056535779,
+        2649954.546136447,
+        2715223.683891194,
+        2856043.644512048
+      ],
+      "ap": [
+        636572.7168685743,
+        595310.9969183167,
+        585879.4375767354,
+        510399.0679319737
+      ],
+      "tax": [
+        392918.6407257683,
+        363682.5824915997,
+        950034.4918823082,
+        256955.2158100632
+      ],
+      "payroll": [
+        877460.7206397358,
+        583805.1023224848,
+        659638.1673520701,
+        622523.3550189717
+      ],
+      "other_oh": [
+        68232.80695291949,
+        215396.9637976484,
+        68240.27925713749,
+        215407.915932911
+      ]
+    },
+    "TD": {
+      "ar": [
+        3959751.04684663,
+        3123310.113971252,
+        3200238.134633644,
+        3366212.455928097
+      ],
+      "ap": [
+        1452248.208108543,
+        1020496.241870677,
+        1358291.061652449,
+        882506.7984668443
+      ],
+      "tax": [
+        500960.8935113201,
+        474569.7337083335,
+        1196251.087970683,
+        333482.3219478725
+      ],
+      "payroll": [
+        1297124.769566501,
+        964448.5617780492,
+        1054719.241467669,
+        1014616.774726099
+      ],
+      "other_oh": [
+        104097.9374247303,
+        389236.3407697552,
+        113054.3827598281,
+        370540.5892598748
+      ]
+    }
+  },
+  "history": [
+    {
+      "date": "2025-12-14",
+      "ar": 43468511.3,
+      "ap": 20202872.7,
+      "payroll": 7239120.36,
+      "tax": 9860721.2,
+      "other_oh": 2832136.26,
+      "delta": 3333660.78
+    },
+    {
+      "date": "2025-12-28",
+      "ar": 30869516.14,
+      "ap": 32662434.28,
+      "payroll": 5052308.76,
+      "tax": 3080860.87,
+      "other_oh": 1198139.48,
+      "delta": -11124227.25
+    },
+    {
+      "date": "2026-01-11",
+      "ar": 67430572.19,
+      "ap": 29660076.22,
+      "payroll": 11539291.74,
+      "tax": 4128509.46,
+      "other_oh": 93763.94,
+      "delta": 22008930.83
+    },
+    {
+      "date": "2026-01-25",
+      "ar": 46490589.69,
+      "ap": 34722103.59,
+      "payroll": 6698174.34,
+      "tax": 4784585.72,
+      "other_oh": 3529778.54,
+      "delta": -3244052.5
+    },
+    {
+      "date": "2026-02-08",
+      "ar": 51118539.76,
+      "ap": 32640898.81,
+      "payroll": 7663203.29,
+      "tax": 5022084.95,
+      "other_oh": 880449.09,
+      "delta": 4911903.62
+    },
+    {
+      "date": "2026-02-22",
+      "ar": 59336523.9,
+      "ap": 25161146.36,
+      "payroll": 7171755.78,
+      "tax": 4288311.26,
+      "other_oh": 2790741.85,
+      "delta": 19924568.65
+    },
+    {
+      "date": "2026-03-08",
+      "ar": 34834117.37,
+      "ap": 25620721.77,
+      "payroll": 18320079.08,
+      "tax": 18987757.89,
+      "other_oh": 104270.44,
+      "delta": -28198711.81
+    },
+    {
+      "date": "2026-03-22",
+      "ar": 30714848.96,
+      "ap": 15345640.09,
+      "payroll": 4224262.35,
+      "tax": 2487145.29,
+      "other_oh": 2511355.6,
+      "delta": 6146445.63
+    }
+  ]
+};
+
+// Currency formatters
+const fmtMoney = n => "$" + Math.round(n).toLocaleString();
+const fmtMoneyM = n => {
+  const sign = n < 0 ? "−" : "";
+  const abs = Math.abs(n);
+  if (abs >= 1e6) return sign + "$" + (abs/1e6).toFixed(2) + "M";
+  if (abs >= 1e3) return sign + "$" + (abs/1e3).toFixed(0) + "K";
+  return sign + "$" + abs.toFixed(0);
+};
+const fmtSigned = n => (n >= 0 ? "+" : "−") + "$" + Math.abs(Math.round(n)).toLocaleString();
+
+// ── Top KPIs (Bottom Up only) ──────────────────────────────────────
+const buNetTotal = DATA.bu.net.reduce((a,b)=>a+b,0);
+const arTotal = DATA.bu.ar.reduce((a,b)=>a+b,0);
+const outTotal =
+  DATA.bu.ap.reduce((a,b)=>a+b,0) +
+  DATA.bu.tax.reduce((a,b)=>a+b,0) +
+  DATA.bu.payroll.reduce((a,b)=>a+b,0) +
+  DATA.bu.other_oh.reduce((a,b)=>a+b,0);
+
+document.getElementById("opening-balance-display").textContent =
+  DATA.opening_balance.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+document.getElementById("kpi-net").textContent = fmtSigned(buNetTotal);
+document.getElementById("kpi-bal").textContent = fmtMoneyM(DATA.bu.balance[4]);
+document.getElementById("kpi-ar").textContent = fmtMoneyM(arTotal);
+document.getElementById("kpi-out").textContent = "−" + fmtMoneyM(outTotal).replace("−","");
+
+// ── Build chart data ───────────────────────────────────────────────
+function shiftDate(yyyymmdd, days){
+  const d = new Date(yyyymmdd + "T00:00:00");
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0,10);
+}
+
+// Historical balance series — work backward from $15M anchor at forecast start
+const histTail = DATA.history.slice(-6);
+let bal = DATA.opening_balance;
+const histBalances = [];
+for (let i = histTail.length - 1; i >= 0; i--) {
+  histBalances.unshift(bal);
+  bal = bal - histTail[i].delta;
+}
+const histPoints = histTail.map((h,i) => ({x: h.date, y: histBalances[i] + h.delta}));
+histPoints.unshift({x: shiftDate(histTail[0].date, -14), y: histBalances[0]});
+
+// Forecast points (Bottom Up)
+const fcDates = ["2026-05-04","2026-05-18","2026-06-01","2026-06-15","2026-06-29"];
+const buPoints = DATA.bu.balance.map((b,i)=>({x: fcDates[i], y: b}));
+
+// Confidence band — ±15% cumulative on each forecast biweek's net change
+function confBand(balances){
+  let upper=[], lower=[];
+  let cumStd = 0;
+  for (let i=0;i<balances.length;i++){
+    if (i===0){upper.push(balances[i]); lower.push(balances[i]); continue}
+    const change = balances[i] - balances[i-1];
+    cumStd += Math.abs(change) * 0.15;
+    upper.push(balances[i] + cumStd);
+    lower.push(balances[i] - cumStd);
+  }
+  return {upper, lower};
+}
+const buBand = confBand(DATA.bu.balance);
+const buUpper = buBand.upper.map((y,i)=>({x: fcDates[i], y}));
+const buLower = buBand.lower.map((y,i)=>({x: fcDates[i], y}));
+
+const allLabels = [...histPoints.map(p=>p.x), ...fcDates];
+
+// Compute the displayed date range, set into the dropdown so it matches the chart x-axis
+const startLabel = histPoints[0].x;
+const endLabel = fcDates[fcDates.length-1];
+function fmtUS(s){
+  const [y,m,d] = s.split("-");
+  return `${m}/${d}/${y}`;
+}
+document.getElementById("date-range-default").textContent =
+  `${fmtUS(startLabel)} - ${fmtUS(endLabel)}`;
+
+// ── Render chart ───────────────────────────────────────────────────
+const ctx = document.getElementById("forecastChart").getContext("2d");
+const chart = new Chart(ctx, {
+  type:"line",
+  data:{
+    labels: allLabels,
+    datasets:[
+      {
+        label:"Confidence-upper",
+        data:[...histPoints.map(p=>({x:p.x,y:null})), ...buUpper],
+        borderColor:"transparent",
+        backgroundColor:"rgba(52,168,83,0.14)",
+        pointRadius:0,
+        fill:"+1",
+        tension:0.25,
+        order:5,
+      },
+      {
+        label:"Confidence-lower",
+        data:[...histPoints.map(p=>({x:p.x,y:null})), ...buLower],
+        borderColor:"transparent",
+        backgroundColor:"transparent",
+        pointRadius:0,
+        fill:false,
+        tension:0.25,
+        order:5,
+      },
+      {
+        label:"Historical",
+        data: histPoints,
+        borderColor:"#9aa0a6",
+        backgroundColor:"#9aa0a6",
+        pointRadius:3,
+        pointHoverRadius:5,
+        tension:0.3,
+        order:2,
+      },
+      {
+        label:"Forecast",
+        data:[
+          {x: histPoints[histPoints.length-1].x, y: histPoints[histPoints.length-1].y},
+          ...buPoints
+        ],
+        borderColor:"#34a853",
+        backgroundColor:"#34a853",
+        borderDash:[6,4],
+        pointRadius:4,
+        pointHoverRadius:6,
+        tension:0.25,
+        order:1,
+      },
+    ],
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{intersect:false,mode:"nearest",axis:"x"},
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:"#1a1d23",
+        titleFont:{size:12,weight:"600"},
+        bodyFont:{size:13},
+        padding:12,
+        cornerRadius:8,
+        displayColors:true,
+        boxPadding:4,
+        callbacks:{
+          title: items => {
+            const d = new Date(items[0].label + "T00:00:00");
+            return d.toLocaleDateString("en-US",{month:"short",day:"2-digit",year:"numeric"});
+          },
+          label: ctx => {
+            if (ctx.dataset.label.startsWith("Confidence")) return null;
+            return `${ctx.dataset.label}: ${fmtMoney(ctx.parsed.y)}`;
+          }
+        }
+      },
+    },
+    scales:{
+      x:{
+        type:"category",
+        grid:{display:false},
+        ticks:{
+          color:"#9aa0a6",
+          font:{size:11},
+          maxRotation:0,
+          callback:function(v){
+            const d = new Date(this.getLabelForValue(v) + "T00:00:00");
+            return d.toLocaleDateString("en-US",{month:"short",day:"2-digit"});
+          }
+        },
+      },
+      y:{
+        grid:{color:"#eef0f3"},
+        ticks:{
+          color:"#9aa0a6",
+          font:{size:11},
+          callback:v => "$"+(v/1e6).toFixed(0)+"M",
+        },
+      },
+    },
+  }
+});
+
+// ── Forecast breakdown table (Bottom Up) ──────────────────────────
+function renderTable(data, container){
+  const labels = DATA.biweeks.map(b => `${b.label}<div style="font-weight:400;color:var(--muted);font-size:11px">${b.range}</div>`);
+  const total = arr => arr.reduce((a,b)=>a+b,0);
+  const outflows = data.ar.map((_,i) => data.ap[i]+data.tax[i]+data.payroll[i]+data.other_oh[i]);
+  const nets = data.ar.map((_,i) => data.ar[i] - outflows[i]);
+  const balance = [DATA.opening_balance];
+  for (const n of nets) balance.push(balance[balance.length-1] + n);
+
+  const rows = [];
+  rows.push(`<tr class="opening"><td>Opening Cash Balance</td><td>${fmtMoney(DATA.opening_balance)}</td><td></td><td></td><td></td><td>${fmtMoney(DATA.opening_balance)}</td></tr>`);
+  rows.push(`<tr class="section-row"><td colspan="6">Inflows</td></tr>`);
+  rows.push(`<tr class="indent"><td>AR</td>${data.ar.map(v=>`<td>${fmtMoney(v)}</td>`).join("")}<td>${fmtMoney(total(data.ar))}</td></tr>`);
+  rows.push(`<tr class="total"><td>Total Inflows</td>${data.ar.map(v=>`<td>${fmtMoney(v)}</td>`).join("")}<td>${fmtMoney(total(data.ar))}</td></tr>`);
+  rows.push(`<tr class="section-row"><td colspan="6">Outflows</td></tr>`);
+  rows.push(`<tr class="indent"><td>AP</td>${data.ap.map(v=>`<td>${fmtMoney(v)}</td>`).join("")}<td>${fmtMoney(total(data.ap))}</td></tr>`);
+  rows.push(`<tr class="indent"><td>Tax Payment</td>${data.tax.map(v=>`<td>${fmtMoney(v)}</td>`).join("")}<td>${fmtMoney(total(data.tax))}</td></tr>`);
+  rows.push(`<tr class="indent"><td>Payroll</td>${data.payroll.map(v=>`<td>${fmtMoney(v)}</td>`).join("")}<td>${fmtMoney(total(data.payroll))}</td></tr>`);
+  rows.push(`<tr class="indent"><td>Other OH</td>${data.other_oh.map(v=>`<td>${fmtMoney(v)}</td>`).join("")}<td>${fmtMoney(total(data.other_oh))}</td></tr>`);
+  rows.push(`<tr class="total"><td>Total Outflows</td>${outflows.map(v=>`<td>${fmtMoney(v)}</td>`).join("")}<td>${fmtMoney(total(outflows))}</td></tr>`);
+  rows.push(`<tr class="net"><td>Net Change in Operating Cash</td>${nets.map(v=>`<td class="${v>=0?'pos':'neg'}">${fmtSigned(v)}</td>`).join("")}<td class="${total(nets)>=0?'pos':'neg'}">${fmtSigned(total(nets))}</td></tr>`);
+  rows.push(`<tr class="closing"><td>Closing Cash Balance</td>${balance.slice(1).map(v=>`<td>${fmtMoney(v)}</td>`).join("")}<td>${fmtMoney(balance[balance.length-1])}</td></tr>`);
+
+  container.innerHTML = `<table>
+    <thead><tr><th>Component</th>${labels.map(l=>`<th>${l}</th>`).join("")}<th>4-BW Total</th></tr></thead>
+    <tbody>${rows.join("")}</tbody></table>`;
+}
+renderTable(DATA.bu, document.getElementById("table-bu"));
+
+// ── Per-entity cards ──────────────────────────────────────────────
+const entityNames = {EE:"E-J Engineering",EJ:"E-J Electric",EN:"E-J Energy",NE:"NE",RI:"Rossi",TD:"TD"};
+const grid = document.getElementById("entity-grid");
+Object.entries(DATA.entities).forEach(([code, e]) => {
+  const totalAR = e.ar.reduce((a,b)=>a+b,0);
+  const totalAP = e.ap.reduce((a,b)=>a+b,0);
+  const totalTax = e.tax.reduce((a,b)=>a+b,0);
+  const totalPay = e.payroll.reduce((a,b)=>a+b,0);
+  const totalOther = e.other_oh.reduce((a,b)=>a+b,0);
+  const totalOut = totalAP + totalTax + totalPay + totalOther;
+  const net = totalAR - totalOut;
+  const maxVal = Math.max(totalAR, totalOut);
+  const components = [
+    {label:"AR (in)",v:totalAR,color:"#34a853"},
+    {label:"AP",v:totalAP,color:"#dc2626"},
+    {label:"Tax",v:totalTax,color:"#f59e0b"},
+    {label:"Payroll",v:totalPay,color:"#9333ea"},
+    {label:"Other",v:totalOther,color:"#6b7280"},
+  ];
+  const card = document.createElement("div");
+  card.className = "card entity-card";
+  card.innerHTML = `
+    <h3>${code} · ${entityNames[code]||code}</h3>
+    <div class="entity-net ${net>=0?'kpi-pos':'kpi-neg'}">${fmtSigned(net)}</div>
+    <div class="entity-sub">4-biweek net change</div>
+    <div class="entity-bars">
+      ${components.map(c => `
+        <div class="entity-bar-row">
+          <span class="label">${c.label}</span>
+          <div class="entity-bar"><div class="entity-bar-fill" style="width:${(c.v/maxVal*100).toFixed(0)}%;background:${c.color}"></div></div>
+          <span class="value">${fmtMoneyM(c.v)}</span>
+        </div>`).join("")}
+    </div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
