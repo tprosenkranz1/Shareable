@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Constrafor Hackathon - May 15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Constrafor brand */
+    --brand-blue: #0749BA;
+    --brand-blue-dark: #053a96;
+    --brand-blue-light: #E8F0FB;
+    --brand-blue-bright: #3574E3;
+    --brand-gold: #FFC453;
+    --brand-gold-dark: #F5B132;
+    --brand-gold-soft: #FFF4DB;
+    --brand-navy: #1D2939;
+    --brand-navy-dark: #131D2C;
+
+    /* Surfaces */
+    --bg: #FAF9F5;
+    --surface: #ffffff;
+    --ink: #141414;
+    --ink-soft: #475569;
+    --ink-faint: #94A3B8;
+    --line: #E5E7EB;
+
+    /* Theme accents (brand-aligned) */
+    --t1: #0749BA; --t1-bg: #E8F0FB;
+    --t2: #3574E3; --t2-bg: #EEF4FC;
+    --t3: #0E7490; --t3-bg: #E0F2F1;
+    --t4: #B17A1B; --t4-bg: #FFF4DB;
+    --t5: #BE185D; --t5-bg: #FCE7F3;
+    --t6: #4F46E5; --t6-bg: #EEF2FF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* Banner strip (mimics Constrafor's gold promo bar) */
+  .top-bar {
+    background: var(--brand-navy);
+    color: white;
+    padding: 10px 24px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .top-bar strong { color: var(--brand-gold); font-weight: 700; }
+
+  /* Header */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 40px 24px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--brand-blue) 0%, var(--brand-blue-bright) 50%, var(--brand-gold) 100%);
+  }
+  .header-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .brand-row { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-bright) 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    box-shadow: 0 1px 2px rgba(7, 73, 186, 0.2);
+  }
+  .brand-text { color: var(--brand-navy); font-weight: 700; letter-spacing: -0.01em; font-size: 16px; }
+  .brand-text span { color: var(--ink-soft); font-weight: 500; }
+
+  .eyebrow {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--brand-blue-light);
+    color: var(--brand-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+    color: var(--brand-navy);
+    line-height: 1.1;
+  }
+  h1 .accent { color: var(--brand-blue); }
+  .tagline { font-size: 17px; color: var(--ink-soft); margin-bottom: 28px; max-width: 560px; line-height: 1.5; }
+
+  .countdown {
+    display: inline-flex;
+    gap: 0;
+    padding: 0;
+    background: var(--brand-navy);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(29, 41, 57, 0.15);
+  }
+  .cd-unit {
+    text-align: center;
+    min-width: 72px;
+    padding: 14px 18px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    color: white;
+  }
+  .cd-unit:last-child { border-right: none; }
+  .cd-num { font-size: 26px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .cd-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 5px; font-weight: 600; }
+  .cd-unit:first-child .cd-num { color: var(--brand-gold); }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 5px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .tab {
+    flex: 1;
+    min-width: 130px;
+    padding: 11px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+    white-space: nowrap;
+    letter-spacing: -0.005em;
+  }
+  .tab:hover { color: var(--brand-navy); background: var(--bg); }
+  .tab.active { background: var(--brand-blue); color: white; box-shadow: 0 1px 3px rgba(7, 73, 186, 0.25); }
+  .tab .badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--brand-blue-light);
+    color: var(--brand-blue);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .tab.active .badge { background: rgba(255,255,255,0.22); color: white; }
+
+  /* Panels */
+  .panel { display: none; animation: fadeIn 0.25s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    transition: box-shadow 0.15s ease;
+  }
+  .card:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .card h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--brand-blue);
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .card .kv { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); gap: 12px; }
+  .card .kv:last-child { border-bottom: none; }
+  .card .kv .k { color: var(--ink-soft); font-size: 14px; font-weight: 500; }
+  .card .kv .v { font-weight: 600; font-size: 14px; color: var(--brand-navy); text-align: right; }
+
+  .schedule-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .schedule-row:last-child { border-bottom: none; }
+  .schedule-row .time { font-weight: 600; color: var(--brand-blue); font-size: 14px; }
+  .schedule-row .what { color: var(--ink); font-size: 14px; }
+
+  /* Themes */
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .theme-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    cursor: default;
+    transition: all 0.18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .theme-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--theme-color);
+  }
+  .theme-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(29,41,57,0.07); }
+  .theme-card .theme-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--theme-bg);
+    color: var(--theme-color);
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .theme-card h4 { font-size: 18px; font-weight: 700; margin-bottom: 6px; color: var(--brand-navy); letter-spacing: -0.01em; }
+  .theme-card .theme-tag { color: var(--ink-soft); font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
+  .theme-card .theme-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .theme-card .signup-count { color: var(--ink-soft); font-weight: 500; }
+  .theme-card .signup-count strong { color: var(--brand-navy); font-weight: 700; }
+  .theme-card .ideas-toggle {
+    background: none;
+    border: none;
+    color: var(--theme-color);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+  }
+  .theme-card .ideas {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--theme-bg);
+    border-radius: 10px;
+    display: none;
+  }
+  .theme-card.open .ideas { display: block; }
+  .theme-card .ideas li {
+    list-style: none;
+    padding: 5px 0 5px 22px;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.55;
+    position: relative;
+  }
+  .theme-card .ideas li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    color: var(--theme-color);
+    font-weight: 700;
+  }
+
+  /* Form */
+  .form-section { max-width: 720px; }
+  .form-section h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: var(--brand-navy); letter-spacing: -0.015em; }
+  .form-section .sub { color: var(--ink-soft); margin-bottom: 24px; }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-navy);
+    margin-bottom: 6px;
+  }
+  .field label .hint { color: var(--ink-faint); font-weight: 400; margin-left: 6px; }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--ink);
+    transition: all 0.15s ease;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 3px var(--brand-blue-light);
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 10px;
+    background: var(--brand-blue);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+    letter-spacing: -0.005em;
+  }
+  .btn:hover { background: var(--brand-blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(7,73,186,0.25); }
+  .btn:active { transform: translateY(0); }
+  .btn.gold { background: var(--brand-gold); color: var(--brand-navy); }
+  .btn.gold:hover { background: var(--brand-gold-dark); box-shadow: 0 4px 12px rgba(255,196,83,0.4); }
+  .btn.ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: var(--surface); color: var(--brand-navy); border-color: var(--ink-soft); box-shadow: none; transform: none; }
+  .btn.danger { background: transparent; color: #dc2626; padding: 6px 10px; font-size: 13px; }
+  .btn.danger:hover { background: #fee2e2; transform: none; box-shadow: none; }
+
+  /* Embedded form iframe */
+  .form-frame-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px;
+    margin-top: 16px;
+  }
+  .form-frame {
+    width: 100%;
+    min-height: 720px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .config-banner {
+    background: var(--brand-gold-soft);
+    border: 1px solid var(--brand-gold);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--brand-navy);
+  }
+  .config-banner strong { display: block; color: var(--brand-navy); font-weight: 700; margin-bottom: 4px; }
+  .config-banner code {
+    background: rgba(29,41,57,0.07);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  /* Teams */
+  .teams-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .teams-header h2 { font-size: 22px; font-weight: 700; color: var(--brand-navy); letter-spacing: -0.015em; }
+  .teams-header .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    border-left: 3px solid var(--brand-blue);
+  }
+  .stat:nth-child(2) { border-left-color: var(--brand-blue-bright); }
+  .stat:nth-child(3) { border-left-color: var(--brand-gold); }
+  .stat .label { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 600; }
+  .stat .value { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--brand-navy); letter-spacing: -0.02em; }
+
+  .team-list { display: grid; gap: 12px; }
+  .team-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative;
+    transition: all 0.18s ease;
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .team-card:hover { box-shadow: 0 4px 14px rgba(29,41,57,0.06); }
+  .team-card .team-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 6px; }
+  .team-card .team-name { font-size: 17px; font-weight: 700; color: var(--brand-navy); letter-spacing: -0.01em; }
+  .theme-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--theme-bg, var(--bg));
+    color: var(--theme-color, var(--ink-soft));
+    white-space: nowrap;
+  }
+  .team-card .team-idea { color: var(--ink); font-size: 14px; margin: 10px 0 14px; line-height: 1.6; }
+  .team-card .team-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .team-card .team-meta strong { color: var(--brand-navy); font-weight: 600; }
+
+  .empty {
+    text-align: center;
+    padding: 70px 20px;
+    color: var(--ink-faint);
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+  }
+  .empty .icon { font-size: 28px; margin-bottom: 12px; color: var(--brand-blue); }
+  .empty h3 { color: var(--brand-navy); margin-bottom: 6px; font-size: 16px; font-weight: 600; }
+
+  .source-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--brand-blue-light);
+    color: var(--brand-blue);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .source-tag.local { background: var(--brand-gold-soft); color: #92671A; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: var(--brand-navy);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(29,41,57,0.25);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    width: 8px;
+    height: 14px;
+    top: -20px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 99;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to {
+      transform: translateY(110vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* Footer */
+  .foot { text-align: center; color: var(--ink-faint); font-size: 12px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    header { padding: 32px 20px 36px; }
+    h1 { font-size: 32px; }
+    .tagline { font-size: 15px; }
+    .countdown { gap: 0; }
+    .cd-unit { min-width: 58px; padding: 10px 12px; }
+    .cd-num { font-size: 20px; }
+    .container { padding: 24px 16px 60px; }
+    .schedule-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <strong>Constrafor Hackathon ·</strong> One day. One build. Ship it. · Friday May 15
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="brand-mark">C</div>
+      <div class="brand-text">Constrafor <span>· Hackathon 2026</span></div>
+    </div>
+    <div class="eyebrow">Friday · May 15 · 2026</div>
+    <h1>Build something <span class="accent">that ships.</span></h1>
+    <div class="tagline">One day, mixed teams, six themes. The winning idea gets product resourcing. Bring something working to the demo at 4pm.</div>
+    <div class="countdown" id="countdown" aria-live="polite">
+      <div class="cd-unit"><div class="cd-num" id="cd-days">0</div><div class="cd-label">Days</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-hours">0</div><div class="cd-label">Hours</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-mins">0</div><div class="cd-label">Min</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-secs">0</div><div class="cd-label">Sec</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="info">Overview</button>
+    <button class="tab" data-tab="themes">Themes</button>
+    <button class="tab" data-tab="signup">Sign up your team</button>
+    <button class="tab" data-tab="teams">Teams <span class="badge" id="team-count">0</span></button>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <section class="panel active" id="panel-info">
+    <div class="grid grid-2" style="margin-bottom: 16px;">
+      <div class="card">
+        <h3>Schedule</h3>
+        <div class="schedule-row"><div class="time">Thu May 14, 9-10am ET</div><div class="what">Kickoff: themes recap, team formation, last-call pitches</div></div>
+        <div class="schedule-row"><div class="time">Fri May 15, build day</div><div class="what">Teams heads-down, async work across timezones</div></div>
+        <div class="schedule-row"><div class="time">Fri May 15, 10am-12pm ET</div><div class="what">Live demos + judging (5 min per team)</div></div>
+        <div class="schedule-row"><div class="time">Fri May 15, 12pm ET</div><div class="what">Winner announced + sign-off</div></div>
+      </div>
+      <div class="card">
+        <h3>Format</h3>
+        <div class="kv"><div class="k">Team size</div><div class="v">4-5 people</div></div>
+        <div class="kv"><div class="k">Mix required</div><div class="v">1 PM + 1 engineer</div></div>
+        <div class="kv"><div class="k">Spread</div><div class="v">Max 2 from same team</div></div>
+        <div class="kv"><div class="k">Scope</div><div class="v">Ship one working thing</div></div>
+        <div class="kv"><div class="k">Signup deadline</div><div class="v">EOD Wed May 13</div></div>
+      </div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Judging</h3>
+        <div class="kv"><div class="k">Judges</div><div class="v">Anwar, Tony, Palash</div></div>
+        <div class="kv"><div class="k">Criteria</div><div class="v">Impact, feasibility, creativity</div></div>
+        <div class="kv"><div class="k">Prize</div><div class="v">Product resourcing + gift</div></div>
+      </div>
+      <div class="card">
+        <h3>What we need from you</h3>
+        <div class="schedule-row"><div class="time">Step 1</div><div class="what">Pick a theme that excites you</div></div>
+        <div class="schedule-row"><div class="time">Step 2</div><div class="what">Form a team of 4-5 (mix functions)</div></div>
+        <div class="schedule-row"><div class="time">Step 3</div><div class="what">Submit your team and idea here</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THEMES -->
+  <section class="panel" id="panel-themes">
+    <div style="margin-bottom: 18px;">
+      <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 6px; color: var(--brand-navy); letter-spacing: -0.015em;">Pick one. Build inside it.</h2>
+      <p style="color: var(--ink-soft);">Click a card to see sample ideas. Remix, combine, or invent something better.</p>
+    </div>
+    <div class="themes-grid" id="themes-grid"></div>
+  </section>
+
+  <!-- SIGNUP -->
+  <section class="panel" id="panel-signup">
+    <div class="form-section">
+      <h2>Sign up your team</h2>
+      <p class="sub">Takes 2 minutes. We'll review and lock teams by EOD Wednesday.</p>
+
+      <div id="signup-config-banner" class="config-banner" style="display:none;">
+        <strong>Local mode</strong>
+        Submissions are saving to this browser only. To make submissions shared and live for everyone, set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> at the top of this file's script (see <code>supabase_setup.md</code>).
+      </div>
+
+      <form id="team-form" autocomplete="off">
+        <div class="field">
+          <label for="f-name">Team name <span class="hint">make it memorable</span></label>
+          <input type="text" id="f-name" required maxlength="60" placeholder="e.g. The Network Effectors" />
+        </div>
+        <div class="field">
+          <label for="f-theme">Theme</label>
+          <select id="f-theme" required>
+            <option value="">Choose a theme</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-idea">Your idea <span class="hint">1-2 sentences, what you'll ship</span></label>
+          <textarea id="f-idea" required maxlength="400" placeholder="A Slack bot that pings reps when a prospect hits a warm-signal threshold..."></textarea>
+        </div>
+        <div class="field">
+          <label for="f-members">Team members <span class="hint">4-5 names, comma-separated</span></label>
+          <input type="text" id="f-members" required placeholder="Alice, Bob, Carol, Dmitry, Elena" />
+        </div>
+        <div class="field">
+          <label for="f-lead">Team lead</label>
+          <input type="text" id="f-lead" required placeholder="Who's running point" />
+        </div>
+        <button type="submit" class="btn">Submit team</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- TEAMS -->
+  <section class="panel" id="panel-teams">
+    <div class="teams-header">
+      <h2>Submitted teams <span id="source-tag-slot"></span></h2>
+      <div class="actions">
+        <button class="btn ghost" id="reload-teams">Refresh</button>
+        <button class="btn ghost" id="export-csv">Export CSV</button>
+        <button class="btn ghost" id="export-md">Export Markdown</button>
+        <button class="btn ghost" id="clear-all">Clear local</button>
+      </div>
+    </div>
+    <div class="stats-row" id="stats-row"></div>
+    <div class="team-list" id="team-list"></div>
+  </section>
+
+  <div class="foot">Built for Constrafor · May 2026 · ship something good</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // =============================================================
+  // ===== CONFIG ================================================
+  // =============================================================
+  // Paste your Supabase project URL + anon public key here.
+  // Both blank = local-only mode (saves to this browser).
+  // Both filled = live shared mode (everyone sees everything).
+  // See supabase_setup.md for the 5-minute setup.
+
+  const SUPABASE_URL = "https://sigxrzwlwzgkvfaeunqw.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_p30EuhVm-mpamBeGLgpArQ_wJQRlJjy";
+  // =============================================================
+
+  const STORAGE_KEY = "constrafor_hackathon_teams_v1";
+  const DEMO_DEADLINE = new Date("2026-05-15T10:00:00-04:00").getTime();
+  const useRemote = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+  const POLL_INTERVAL_MS = 5000;
+
+  // ===== THEMES =====
+  const THEMES = [
+    {
+      id: 1, name: "AI SEO",
+      tag: "show up when buyers ask ChatGPT or Claude about our category",
+      color: "var(--t1)", bg: "var(--t1-bg)",
+      ideas: [
+        "Audit where we're cited today vs. competitors across ChatGPT, Claude, Perplexity, and Gemini",
+        "A dashboard that tracks our AI-search mentions over time and alerts on ranking changes",
+        "Structured Q&A pages and a glossary, written specifically for LLM retrieval",
+        "A daily bot that probes \"best [category] for [use case]\" prompts and reports the answers",
+        "Targeted updates to Wikipedia, G2, and other high-trust sources that feed AI training data"
+      ]
+    },
+    {
+      id: 2, name: "LinkedIn engine",
+      tag: "turn launches, calls, and posts into a content flywheel",
+      color: "var(--t2)", bg: "var(--t2-bg)",
+      ideas: [
+        "Tool that converts a product launch or blog post into five LinkedIn drafts in our founders' voices",
+        "Customer call to LinkedIn post pipeline pulling best moments from Fireflies transcripts",
+        "A comment assistant that drafts replies on trending posts tied to our positioning",
+        "Scheduler that pairs each post with the right author, day, and time slot",
+        "Pull the best line from our last 50 internal Slack messages into post drafts"
+      ]
+    },
+    {
+      id: 3, name: "Blog + content automation",
+      tag: "compress idea-to-published from weeks to days",
+      color: "var(--t3)", bg: "var(--t3-bg)",
+      ideas: [
+        "Pipeline that drafts a blog post from release notes or a customer call transcript",
+        "SEO brief generator fed by our keyword data and competitor pages",
+        "Customer story in 30 minutes: pulls from CRM, Slack, and email and produces a draft",
+        "A repurposer that turns one blog into email, LinkedIn, and AI-SEO Q&A versions",
+        "What should we publish this week recommender, built from product + sales activity"
+      ]
+    },
+    {
+      id: 4, name: "Network effects",
+      tag: "use the data we already have on who works with whom",
+      color: "var(--t4)", bg: "var(--t4-bg)",
+      ideas: [
+        "Show subs we work with the same GCs they do - build trust before they convert",
+        "Show GCs which other GCs already run EPP - social proof for our biggest product",
+        "Sub-2-Sub recommendation engine: find lookalike subs from our existing customer base",
+        "Peer benchmarking: \"subs your size in [trade] in [state] are funding 22% more invoices\"",
+        "Sales outreach that leads with shared connections",
+        "Network map that visualizes our coverage of any GC's sub list"
+      ]
+    },
+    {
+      id: 5, name: "Smarter outreach + lifecycle",
+      tag: "use real signal to time and personalize, not always-on banners",
+      color: "var(--t5)", bg: "var(--t5-bg)",
+      ideas: [
+        "Personalized banners: \"get your $47K from [GC Name] in 5 days\" instead of generic copy",
+        "COI submission triggers an EPP intro - that user is starting a new project",
+        "The welcome + drip series we never sent to the 200+ Cru email-connect users",
+        "Big-supplier-bill detector that triggers a \"need funding?\" message",
+        "Warm-signal score for SDRs (visited EPP 3+ times, used calculator, started pre-approval)",
+        "\"Send this to your boss\" forward-friendly one-pager for admin-role users"
+      ]
+    },
+    {
+      id: 6, name: "Public agent / API",
+      tag: "take what we have and put it out into the world",
+      color: "var(--t6)", bg: "var(--t6-bg)",
+      ideas: [
+        "A public COI Agent skill anyone can invoke from Claude or ChatGPT",
+        "A \"find a subcontractor\" agent built on our Public API",
+        "A free, embeddable ROI Calculator widget for partner sites (and lead source for us)",
+        "A Slack bot any GC can install to manage COIs and EPP requests in their workspace",
+        "A Constrafor MCP server that any AI agent can call to look up sub data"
+      ]
+    }
+  ];
+
+  // ===== STATE =====
+  let teams = loadTeams();
+
+  function loadTeams() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function saveTeams() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(teams)); } catch (e) {}
+  }
+
+  // ===== COUNTDOWN =====
+  function tickCountdown() {
+    const now = Date.now();
+    const diff = DEMO_DEADLINE - now;
+    if (diff <= 0) {
+      document.getElementById("cd-days").textContent = "0";
+      document.getElementById("cd-hours").textContent = "0";
+      document.getElementById("cd-mins").textContent = "0";
+      document.getElementById("cd-secs").textContent = "GO";
+      return;
+    }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    document.getElementById("cd-days").textContent = d;
+    document.getElementById("cd-hours").textContent = String(h).padStart(2, "0");
+    document.getElementById("cd-mins").textContent = String(m).padStart(2, "0");
+    document.getElementById("cd-secs").textContent = String(s).padStart(2, "0");
+  }
+  setInterval(tickCountdown, 1000);
+  tickCountdown();
+
+  // ===== TABS =====
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("panel-" + tab.dataset.tab).classList.add("active");
+      if (tab.dataset.tab === "teams" && useRemote) fetchRemoteTeams();
+    });
+  });
+
+  // ===== THEMES UI =====
+  const themesGrid = document.getElementById("themes-grid");
+  function renderThemes() {
+    themesGrid.innerHTML = "";
+    THEMES.forEach(t => {
+      const count = teams.filter(team => team.themeId === t.id).length;
+      const card = document.createElement("div");
+      card.className = "theme-card";
+      card.style.setProperty("--theme-color", t.color);
+      card.style.setProperty("--theme-bg", t.bg);
+      card.innerHTML = `
+        <div class="theme-num">${t.id}</div>
+        <h4>${t.name}</h4>
+        <div class="theme-tag">${t.tag}</div>
+        <div class="theme-meta">
+          <div class="signup-count"><strong>${count}</strong> team${count === 1 ? "" : "s"} on this theme</div>
+          <button class="ideas-toggle">See sample ideas →</button>
+        </div>
+        <div class="ideas">
+          <ul>${t.ideas.map(i => `<li>${escapeHtml(i)}</li>`).join("")}</ul>
+        </div>
+      `;
+      card.querySelector(".ideas-toggle").addEventListener("click", () => {
+        card.classList.toggle("open");
+        const btn = card.querySelector(".ideas-toggle");
+        btn.textContent = card.classList.contains("open") ? "Hide sample ideas" : "See sample ideas →";
+      });
+      themesGrid.appendChild(card);
+    });
+  }
+
+  // ===== SIGNUP =====
+  const themeSelect = document.getElementById("f-theme");
+  THEMES.forEach(t => {
+    const opt = document.createElement("option");
+    opt.value = t.id;
+    opt.textContent = `${t.id}. ${t.name}`;
+    themeSelect.appendChild(opt);
+  });
+
+  function setupSignupUI() {
+    const banner = document.getElementById("signup-config-banner");
+    banner.style.display = useRemote ? "none" : "block";
+  }
+  setupSignupUI();
+
+  document.getElementById("team-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const submitBtn = e.target.querySelector("button[type=submit]");
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting...";
+
+    const team = {
+      name: document.getElementById("f-name").value.trim(),
+      themeId: parseInt(document.getElementById("f-theme").value, 10),
+      idea: document.getElementById("f-idea").value.trim(),
+      members: document.getElementById("f-members").value.trim(),
+      lead: document.getElementById("f-lead").value.trim(),
+    };
+
+    try {
+      if (useRemote) {
+        await insertRemoteTeam(team);
+        await fetchRemoteTeams();
+      } else {
+        team.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        team.submittedAt = new Date().toISOString();
+        teams.unshift(team);
+        saveTeams();
+        renderTeams();
+        renderThemes();
+        updateTeamCount();
+      }
+      e.target.reset();
+      showToast(`"${team.name}" is in. Let's build.`);
+      fireConfetti();
+      setTimeout(() => switchTab("teams"), 800);
+    } catch (err) {
+      console.error("Submit failed:", err);
+      showToast("Submit failed: " + (err.message || "unknown error"));
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+    }
+  });
+
+  function switchTab(name) {
+    document.querySelector(`.tab[data-tab="${name}"]`).click();
+  }
+
+  // ===== SUPABASE =====
+  async function supaFetch(path, opts = {}) {
+    const url = SUPABASE_URL.replace(/\/$/, "") + "/rest/v1" + path;
+    return fetch(url, {
+      ...opts,
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
+        ...(opts.headers || {})
+      }
+    });
+  }
+
+  async function fetchRemoteTeams() {
+    if (!useRemote) return;
+    try {
+      const resp = await supaFetch("/teams?select=*&order=submitted_at.desc");
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error("status " + resp.status + " " + txt);
+      }
+      const rows = await resp.json();
+      teams = rows.map(r => ({
+        id: r.id,
+        name: r.name,
+        themeId: r.theme_id,
+        idea: r.idea,
+        members: r.members,
+        lead: r.lead,
+        submittedAt: r.submitted_at
+      }));
+      renderTeams();
+      renderThemes();
+      updateTeamCount();
+    } catch (e) {
+      console.warn("Supabase fetch failed:", e);
+      showToast("Couldn't reach Supabase. Check the URL/key.");
+    }
+  }
+
+  async function insertRemoteTeam(team) {
+    const resp = await supaFetch("/teams", {
+      method: "POST",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify({
+        name: team.name,
+        theme_id: team.themeId,
+        idea: team.idea,
+        members: team.members,
+        lead: team.lead
+      })
+    });
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error("Insert " + resp.status + " - " + txt);
+    }
+    return resp.json();
+  }
+
+  // ===== TEAMS UI =====
+  function renderTeams() {
+    const list = document.getElementById("team-list");
+    list.innerHTML = "";
+
+    const slot = document.getElementById("source-tag-slot");
+    slot.innerHTML = useRemote
+      ? `<span class="source-tag">Live · shared</span>`
+      : `<span class="source-tag local">Local · This browser</span>`;
+
+    if (teams.length === 0) {
+      list.innerHTML = `
+        <div class="empty">
+          <div class="icon">○</div>
+          <h3>No teams yet</h3>
+          <p>${useRemote ? "Once people submit the form, teams show up here." : "Be the first - head to \"Sign up your team\" above."}</p>
+        </div>
+      `;
+      renderStats();
+      return;
+    }
+    teams.forEach(team => {
+      const theme = THEMES.find(t => t.id === team.themeId);
+      const card = document.createElement("div");
+      card.className = "team-card";
+      const pillStyle = theme ? `--theme-color: ${theme.color}; --theme-bg: ${theme.bg};` : "";
+      card.innerHTML = `
+        <div class="team-top">
+          <div class="team-name">${escapeHtml(team.name)}</div>
+          <div class="theme-pill" style="${pillStyle}">${theme ? escapeHtml(theme.name) : "?"}</div>
+        </div>
+        <div class="team-idea">${escapeHtml(team.idea)}</div>
+        <div class="team-meta">
+          <div><strong>${escapeHtml(team.members)}</strong>${team.lead ? " · lead: " + escapeHtml(team.lead) : ""}</div>
+          ${useRemote ? "" : `<button class="btn danger" data-id="${team.id}">Remove</button>`}
+        </div>
+      `;
+      const rm = card.querySelector(".btn.danger");
+      if (rm) {
+        rm.addEventListener("click", () => {
+          if (confirm(`Remove "${team.name}"?`)) {
+            teams = teams.filter(t => t.id !== team.id);
+            saveTeams();
+            renderTeams();
+            renderThemes();
+            updateTeamCount();
+          }
+        });
+      }
+      list.appendChild(card);
+    });
+    renderStats();
+  }
+
+  function renderStats() {
+    const row = document.getElementById("stats-row");
+    const total = teams.length;
+    const themesUsed = new Set(teams.map(t => t.themeId).filter(Boolean)).size;
+    const totalPeople = teams.reduce((acc, t) => acc + (t.members.split(",").filter(s => s.trim()).length), 0);
+    row.innerHTML = `
+      <div class="stat"><div class="label">Teams</div><div class="value">${total}</div></div>
+      <div class="stat"><div class="label">Themes covered</div><div class="value">${themesUsed} <span style="font-size:14px;color:var(--ink-faint);font-weight:500;">/ 6</span></div></div>
+      <div class="stat"><div class="label">People signed up</div><div class="value">${totalPeople}</div></div>
+    `;
+  }
+
+  function updateTeamCount() {
+    document.getElementById("team-count").textContent = teams.length;
+  }
+
+  function escapeHtml(s) {
+    return String(s || "").replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  // ===== TOAST =====
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+  }
+
+  // ===== CONFETTI =====
+  function fireConfetti() {
+    const colors = ["#0749BA", "#3574E3", "#FFC453", "#F5B132", "#4F46E5", "#0E7490", "#BE185D"];
+    for (let i = 0; i < 80; i++) {
+      const el = document.createElement("div");
+      el.className = "confetti";
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.animationDuration = (1.5 + Math.random() * 1.5) + "s";
+      el.style.animationDelay = (Math.random() * 0.3) + "s";
+      el.style.transform = `rotate(${Math.random() * 360}deg)`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }
+  }
+
+  // ===== EXPORTS =====
+  function downloadFile(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById("export-csv").addEventListener("click", () => {
+    if (teams.length === 0) { showToast("No teams to export yet."); return; }
+    const rows = [["Team Name", "Theme", "Idea", "Members", "Lead", "Submitted At"]];
+    teams.forEach(t => {
+      const theme = THEMES.find(x => x.id === t.themeId);
+      rows.push([t.name, theme ? theme.name : "", t.idea, t.members, t.lead, t.submittedAt]);
+    });
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    downloadFile("hackathon_teams.csv", csv, "text/csv");
+    showToast("CSV downloaded.");
+  });
+
+  document.getElementById("export-md").addEventListener("click", () => {
+    if (teams.length === 0) { showToast("No teams to export yet."); return; }
+    let md = "# Constrafor Hackathon — Team Submissions\n\n";
+    md += `Exported ${new Date().toLocaleString()}\n\n`;
+    md += `Total: ${teams.length} teams\n\n---\n\n`;
+    teams.forEach(t => {
+      const theme = THEMES.find(x => x.id === t.themeId);
+      md += `## ${t.name}\n\n`;
+      md += `**Theme:** ${theme ? theme.name : "?"}  \n`;
+      md += `**Lead:** ${t.lead || "(unspecified)"}  \n`;
+      md += `**Members:** ${t.members}\n\n`;
+      md += `${t.idea}\n\n---\n\n`;
+    });
+    downloadFile("hackathon_teams.md", md, "text/markdown");
+    showToast("Markdown downloaded.");
+  });
+
+  document.getElementById("clear-all").addEventListener("click", () => {
+    if (useRemote) {
+      showToast("Live mode: delete rows from the Supabase dashboard.");
+      return;
+    }
+    if (teams.length === 0) { showToast("Nothing to clear."); return; }
+    if (confirm(`Clear all ${teams.length} team(s) from this browser? This can't be undone.`)) {
+      teams = [];
+      saveTeams();
+      renderTeams();
+      renderThemes();
+      updateTeamCount();
+      showToast("Local data cleared.");
+    }
+  });
+
+  document.getElementById("reload-teams").addEventListener("click", () => {
+    if (useRemote) {
+      fetchRemoteTeams().then(() => showToast("Refreshed."));
+    } else {
+      teams = loadTeams();
+      renderTeams();
+      renderThemes();
+      updateTeamCount();
+      showToast("Refreshed.");
+    }
+  });
+
+  // ===== INIT =====
+  renderThemes();
+  renderTeams();
+  updateTeamCount();
+
+  // Poll only when Teams tab is visible and the browser tab itself is in focus
+  let pollTimer = null;
+  function maybeStartPolling() {
+    const teamsTabActive = document.querySelector(".tab[data-tab=teams]").classList.contains("active");
+    if (useRemote && teamsTabActive && !document.hidden) {
+      if (!pollTimer) pollTimer = setInterval(fetchRemoteTeams, POLL_INTERVAL_MS);
+    } else if (pollTimer) {
+      clearInterval(pollTimer);
+      pollTimer = null;
+    }
+  }
+  document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => setTimeout(maybeStartPolling, 0)));
+  document.addEventListener("visibilitychange", maybeStartPolling);
+
+  if (useRemote) {
+    fetchRemoteTeams();
+    maybeStartPolling();
+  }
+</script>
+</body>
+</html>
