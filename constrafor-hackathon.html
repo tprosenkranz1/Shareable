@@ -82,6 +82,12 @@
   .header-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
   .brand-row { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
   .brand-mark {
+    height: 32px;
+    width: auto;
+    display: inline-block;
+    object-fit: contain;
+  }
+  .brand-mark.fallback {
     width: 38px;
     height: 38px;
     border-radius: 50%;
@@ -93,9 +99,8 @@
     font-weight: 800;
     font-size: 17px;
     letter-spacing: -0.02em;
-    box-shadow: 0 1px 2px rgba(7, 73, 186, 0.2);
   }
-  .brand-text { color: var(--brand-navy); font-weight: 700; letter-spacing: -0.01em; font-size: 16px; }
+  .brand-text { color: var(--brand-navy); font-weight: 700; letter-spacing: -0.01em; font-size: 14px; padding-left: 8px; border-left: 1px solid var(--line); }
   .brand-text span { color: var(--ink-soft); font-weight: 500; }
 
   .eyebrow {
@@ -562,8 +567,11 @@
 <header>
   <div class="header-inner">
     <div class="brand-row">
-      <div class="brand-mark">C</div>
-      <div class="brand-text">Constrafor <span>· Hackathon 2026</span></div>
+      <img class="brand-mark"
+           src="https://www.constrafor.com/hs-fs/hubfs/KB-ConstraConnect/Logos/Constrafor%20Logo%20-%20Color/constrafor%20logo_Colored.png?width=400"
+           alt="Constrafor"
+           onerror="this.outerHTML='<div class=\'brand-mark fallback\'>C</div>'" />
+      <div class="brand-text">Hackathon <span>· 2026</span></div>
     </div>
     <div class="eyebrow">Friday · May 15 · 2026</div>
     <h1>Build something <span class="accent">that ships.</span></h1>
@@ -598,7 +606,7 @@
       <div class="card">
         <h3>Format</h3>
         <div class="kv"><div class="k">Team size</div><div class="v">4-5 people</div></div>
-        <div class="kv"><div class="k">Mix required</div><div class="v">1 PM + 1 engineer</div></div>
+        <div class="kv"><div class="k">Suggested mix</div><div class="v">1 PM or engineer per team</div></div>
         <div class="kv"><div class="k">Spread</div><div class="v">Max 2 from same team</div></div>
         <div class="kv"><div class="k">Scope</div><div class="v">Ship one working thing</div></div>
         <div class="kv"><div class="k">Signup deadline</div><div class="v">EOD Wed May 13</div></div>
@@ -713,11 +721,11 @@
       tag: "show up when buyers ask ChatGPT or Claude about our category",
       color: "var(--t1)", bg: "var(--t1-bg)",
       ideas: [
-        "Audit where we're cited today vs. competitors across ChatGPT, Claude, Perplexity, and Gemini",
-        "A dashboard that tracks our AI-search mentions over time and alerts on ranking changes",
-        "Structured Q&A pages and a glossary, written specifically for LLM retrieval",
-        "A daily bot that probes \"best [category] for [use case]\" prompts and reports the answers",
-        "Targeted updates to Wikipedia, G2, and other high-trust sources that feed AI training data"
+        "A live dashboard that ranks Constrafor vs. competitors for our top 20 buyer prompts across ChatGPT, Claude, Perplexity and Gemini, refreshed daily",
+        "A morning bot that runs key prompts against every major LLM and posts ranking changes to #marketing in Slack",
+        "A scorer that grades any Constrafor.com page on \"LLM retrievability\" and outputs concrete rewrite suggestions",
+        "An auto-generator that turns our 50 most-asked customer questions into LLM-optimized Q&A pages and pushes them live to the blog",
+        "A Reddit/HN watcher agent that drafts helpful, citation-worthy answers to category questions and posts them for review"
       ]
     },
     {
@@ -725,11 +733,11 @@
       tag: "turn launches, calls, and posts into a content flywheel",
       color: "var(--t2)", bg: "var(--t2-bg)",
       ideas: [
-        "Tool that converts a product launch or blog post into five LinkedIn drafts in our founders' voices",
-        "Customer call to LinkedIn post pipeline pulling best moments from Fireflies transcripts",
-        "A comment assistant that drafts replies on trending posts tied to our positioning",
-        "Scheduler that pairs each post with the right author, day, and time slot",
-        "Pull the best line from our last 50 internal Slack messages into post drafts"
+        "A web app where you paste a blog URL and out come 5 LinkedIn drafts in our founders' voices, ready to copy-paste or schedule",
+        "A Slack agent that watches new Fireflies transcripts and DMs #marketing with 1-2 ready-to-post LinkedIn drafts after every customer call",
+        "A Chrome extension that adds a \"draft a Constrafor reply\" button to LinkedIn comments on trending construction posts",
+        "A scheduling dashboard with author-day-time picker and a one-click LinkedIn API send",
+        "A bot that scans our last 50 internal Slack messages and surfaces 3 LinkedIn-ready quotes from them each Friday"
       ]
     },
     {
@@ -737,11 +745,11 @@
       tag: "compress idea-to-published from weeks to days",
       color: "var(--t3)", bg: "var(--t3-bg)",
       ideas: [
-        "Pipeline that drafts a blog post from release notes or a customer call transcript",
-        "SEO brief generator fed by our keyword data and competitor pages",
-        "Customer story in 30 minutes: pulls from CRM, Slack, and email and produces a draft",
-        "A repurposer that turns one blog into email, LinkedIn, and AI-SEO Q&A versions",
-        "What should we publish this week recommender, built from product + sales activity"
+        "A web app: paste a release-notes link, get back a publish-ready blog post with SEO meta, hero image, and a draft tweet thread",
+        "An SEO brief generator that takes a keyword and outputs competitor analysis, outline, target word count, and headings - all pulled from live SERP data",
+        "A \"customer story in 30 minutes\" tool that pulls quotes from Fireflies, the CRM, and Slack and outputs a finished case study draft",
+        "A one-click content repurposer: paste any blog URL → outputs email, LinkedIn post, AI-SEO Q&A page, and tweet thread versions",
+        "A weekly recommender bot that scans product and sales activity and posts \"publish these 3 things this week\" to #marketing every Monday"
       ]
     },
     {
@@ -749,12 +757,12 @@
       tag: "use the data we already have on who works with whom",
       color: "var(--t4)", bg: "var(--t4-bg)",
       ideas: [
-        "Show subs we work with the same GCs they do - build trust before they convert",
-        "Show GCs which other GCs already run EPP - social proof for our biggest product",
-        "Sub-2-Sub recommendation engine: find lookalike subs from our existing customer base",
-        "Peer benchmarking: \"subs your size in [trade] in [state] are funding 22% more invoices\"",
-        "Sales outreach that leads with shared connections",
-        "Network map that visualizes our coverage of any GC's sub list"
+        "A working \"Did You Know?\" banner widget on the platform that tells subs we work with N of their GCs and offers to intro them",
+        "A new GC dashboard page: a logo wall + funded-volume stats for every other GC running EPP, ready to drop into sales decks",
+        "A Sub-2-Sub recommender: enter any sub, get back the 10 most-likely-to-convert lookalikes from our data with shared-GC overlap %",
+        "A live benchmarking page where any sub enters trade + state + size and sees how their funded volume compares to peers",
+        "A Chrome extension for SDRs that adds \"shared GCs with this prospect\" data right inside HubSpot contact pages",
+        "An interactive network map where you pick any GC and see their full Constrafor sub network as a visual graph"
       ]
     },
     {
@@ -762,12 +770,12 @@
       tag: "use real signal to time and personalize, not always-on banners",
       color: "var(--t5)", bg: "var(--t5-bg)",
       ideas: [
-        "Personalized banners: \"get your $47K from [GC Name] in 5 days\" instead of generic copy",
-        "COI submission triggers an EPP intro - that user is starting a new project",
-        "The welcome + drip series we never sent to the 200+ Cru email-connect users",
-        "Big-supplier-bill detector that triggers a \"need funding?\" message",
-        "Warm-signal score for SDRs (visited EPP 3+ times, used calculator, started pre-approval)",
-        "\"Send this to your boss\" forward-friendly one-pager for admin-role users"
+        "A working personalized banner on a staging build of sub homepage: \"Get your $47K from [GC Name] in 5 days\" using real data",
+        "An auto-email that fires when a sub submits a COI: subject \"Starting a new project? Here's how to fund it\" with EPP intro",
+        "The full welcome + drip sequence built in our ESP and ready to queue for the 200+ dormant Cru email-connect users on Monday",
+        "A supplier-bill alert agent that watches Cru data and pings the assigned rep in Slack when a sub has a >$25K supplier bill",
+        "A live warm-signal score property in HubSpot that scores every sub 0-100 based on EPP page views, calculator use, pre-approval starts",
+        "A \"forward to your boss\" landing page generator: admins type their boss's name and role and get a personalized funding pitch URL"
       ]
     },
     {
@@ -775,11 +783,12 @@
       tag: "take what we have and put it out into the world",
       color: "var(--t6)", bg: "var(--t6-bg)",
       ideas: [
-        "A public COI Agent skill anyone can invoke from Claude or ChatGPT",
-        "A \"find a subcontractor\" agent built on our Public API",
-        "A free, embeddable ROI Calculator widget for partner sites (and lead source for us)",
-        "A Slack bot any GC can install to manage COIs and EPP requests in their workspace",
-        "A Constrafor MCP server that any AI agent can call to look up sub data"
+        "A live public COI Agent skill installed in Claude or ChatGPT - user asks for a COI, agent generates the request and sends to the GC",
+        "A \"find me a subcontractor\" agent on our Public API: user types \"glazier in Texas with $5M+ revenue\" and gets a ranked list back",
+        "A deployable embeddable ROI Calculator widget: a partner pastes one <script> tag and gets a branded EPP calculator with lead capture",
+        "A working Slack bot installable to any workspace that lets GCs approve COIs and request EPP funds from inside Slack",
+        "A live Constrafor MCP server that exposes subs, COIs, projects, and invoices as tools any AI agent (Claude, OpenAI) can call",
+        "A \"Constrafor for ChatGPT\" plugin that lets users ask \"compare these 3 subs for me\" with real Constrafor data"
       ]
     }
   ];
