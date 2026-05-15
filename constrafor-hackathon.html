@@ -506,6 +506,59 @@
   }
   .source-tag.local { background: var(--brand-gold-soft); color: #92671A; }
 
+  /* Voting */
+  .vote-intro { margin-bottom: 22px; }
+  .vote-intro h2 { font-size: 24px; font-weight: 700; color: var(--brand-navy); letter-spacing: -0.015em; margin-bottom: 6px; }
+  .vote-intro p { color: var(--ink-soft); }
+  .vote-category {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 16px;
+  }
+  .vote-category h3 { font-size: 18px; font-weight: 700; color: var(--brand-navy); margin-bottom: 4px; }
+  .vote-category .vc-desc { color: var(--ink-soft); font-size: 14px; margin-bottom: 16px; }
+  .vote-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .vote-option:hover { border-color: var(--brand-blue); background: var(--brand-blue-light); }
+  .vote-option input { accent-color: var(--brand-blue); width: 16px; height: 16px; cursor: pointer; }
+  .vote-option.selected { border-color: var(--brand-blue); background: var(--brand-blue-light); }
+  .vote-option .vo-name { font-weight: 600; font-size: 14px; color: var(--brand-navy); }
+  .vote-option .vo-theme { color: var(--ink-faint); font-size: 12px; margin-left: auto; }
+  /* Results bars */
+  .vote-result-row { margin-bottom: 10px; }
+  .vote-result-row .vr-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .vote-result-row .vr-name { font-weight: 600; color: var(--brand-navy); }
+  .vote-result-row .vr-count { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .vote-bar-track { background: var(--bg); border-radius: 999px; height: 10px; overflow: hidden; }
+  .vote-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-blue), var(--brand-blue-bright));
+    border-radius: 999px;
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .vote-result-row.leader .vote-bar-fill { background: linear-gradient(90deg, var(--brand-gold-dark), var(--brand-gold)); }
+  .voted-banner {
+    background: var(--brand-blue-light);
+    border: 1px solid var(--brand-blue);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: var(--brand-blue);
+    font-weight: 600;
+  }
+
   /* Toast */
   .toast {
     position: fixed;
@@ -591,6 +644,7 @@
     <button class="tab" data-tab="themes">Themes</button>
     <button class="tab" data-tab="signup">Sign up your team</button>
     <button class="tab" data-tab="teams">Teams <span class="badge" id="team-count">0</span></button>
+    <button class="tab" data-tab="vote">Vote</button>
   </nav>
 
   <!-- OVERVIEW -->
@@ -598,7 +652,7 @@
     <div class="grid grid-2" style="margin-bottom: 16px;">
       <div class="card">
         <h3>Schedule</h3>
-        <div class="schedule-row"><div class="time">Thu May 14, 9-9:15 am ET</div><div class="what">Kickoff: themes recap, team formation, last-call pitches</div></div>
+        <div class="schedule-row"><div class="time">Thu May 14, 9-10am ET</div><div class="what">Kickoff: themes recap, team formation, last-call pitches</div></div>
         <div class="schedule-row"><div class="time">Fri May 15, build day</div><div class="what">Teams heads-down, async work across timezones</div></div>
         <div class="schedule-row"><div class="time">Fri May 15, 1-2pm ET</div><div class="what">Live demos + judging (5 min per team)</div></div>
         <div class="schedule-row"><div class="time">Fri May 15, 2pm ET</div><div class="what">Winner announced + sign-off</div></div>
@@ -691,6 +745,23 @@
     <div class="team-list" id="team-list"></div>
   </section>
 
+  <!-- VOTE -->
+  <section class="panel" id="panel-vote">
+    <div class="vote-intro">
+      <h2>Cast your votes</h2>
+      <p>Two crowd awards, decided by the room. One vote per category. Please don't vote for your own team.</p>
+    </div>
+    <div id="vote-config-banner" class="config-banner" style="display:none;">
+      <strong>Voting needs the shared backend</strong>
+      Set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> at the top of this file's script to enable voting.
+    </div>
+    <div id="voted-banner" class="voted-banner" style="display:none;">
+      Thanks - your votes are in. Live tallies below.
+    </div>
+    <div id="vote-form"></div>
+    <div id="vote-results"></div>
+  </section>
+
   <div class="foot">Built for Constrafor · May 2026 · ship something good</div>
 </div>
 
@@ -710,9 +781,29 @@
   // =============================================================
 
   const STORAGE_KEY = "constrafor_hackathon_teams_v1";
+  const VOTE_STORAGE_KEY = "constrafor_hackathon_voted_v1";
   const DEMO_DEADLINE = new Date("2026-05-15T13:00:00-04:00").getTime();
   const useRemote = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
   const POLL_INTERVAL_MS = 5000;
+
+  // ===== VOTE CATEGORIES =====
+  const VOTE_CATEGORIES = [
+    {
+      id: "boldest_bet",
+      name: "Built Different: Boldest Bet",
+      desc: "The team that swung the biggest - the highest-ceiling idea, whether or not it fully landed."
+    },
+    {
+      id: "best_use_of_data",
+      name: "Data Miner: Best Use of Constrafor Data",
+      desc: "The team that best leveraged data only Constrafor has - the GC-sub graph, payment behavior, Cru signals."
+    },
+    {
+      id: "best_team_name",
+      name: "Most Fundable: Best Team Name",
+      desc: "The team name that best captures the spirit of the day. Pure naming glory."
+    }
+  ];
 
   // ===== THEMES =====
   const THEMES = [
@@ -785,7 +876,7 @@
       ideas: [
         "A live public COI Agent skill installed in Claude or ChatGPT - user asks for a COI, agent generates the request and sends to the GC",
         "A \"find me a subcontractor\" agent on our Public API: user types \"glazier in Texas with $5M+ revenue\" and gets a ranked list back",
-        "A deployable embeddable ROI Calculator widget: a partner pastes one <script> tag and gets a branded EPP calculator with lead capture",
+        "A deployable embeddable ROI Calculator widget: a partner drops one embed snippet on their site and gets a branded EPP calculator with lead capture",
         "A working Slack bot installable to any workspace that lets GCs approve COIs and request EPP funds from inside Slack",
         "A live Constrafor MCP server that exposes subs, COIs, projects, and invoices as tools any AI agent (Claude, OpenAI) can call",
         "A \"Constrafor for ChatGPT\" plugin that lets users ask \"compare these 3 subs for me\" with real Constrafor data"
@@ -837,6 +928,7 @@
       tab.classList.add("active");
       document.getElementById("panel-" + tab.dataset.tab).classList.add("active");
       if (tab.dataset.tab === "teams" && useRemote) fetchRemoteTeams();
+      if (tab.dataset.tab === "vote") openVotePanel();
     });
   });
 
@@ -989,6 +1081,175 @@
       throw new Error("Insert " + resp.status + " - " + txt);
     }
     return resp.json();
+  }
+
+  // ===== VOTING =====
+  function hasVoted() {
+    try { return localStorage.getItem(VOTE_STORAGE_KEY) === "1"; } catch (e) { return false; }
+  }
+  function markVoted() {
+    try { localStorage.setItem(VOTE_STORAGE_KEY, "1"); } catch (e) {}
+  }
+
+  async function openVotePanel() {
+    const banner = document.getElementById("vote-config-banner");
+    const votedBanner = document.getElementById("voted-banner");
+    const formEl = document.getElementById("vote-form");
+    const resultsEl = document.getElementById("vote-results");
+
+    if (!useRemote) {
+      banner.style.display = "block";
+      formEl.innerHTML = "";
+      resultsEl.innerHTML = "";
+      votedBanner.style.display = "none";
+      return;
+    }
+    banner.style.display = "none";
+
+    await fetchRemoteTeams();
+
+    if (teams.length === 0) {
+      formEl.innerHTML = `
+        <div class="empty">
+          <div class="icon">○</div>
+          <h3>No teams to vote on yet</h3>
+          <p>Teams show up here once they've signed up.</p>
+        </div>`;
+      resultsEl.innerHTML = "";
+      votedBanner.style.display = "none";
+      return;
+    }
+
+    if (hasVoted()) {
+      formEl.innerHTML = "";
+      votedBanner.style.display = "block";
+      await renderVoteResults();
+    } else {
+      votedBanner.style.display = "none";
+      resultsEl.innerHTML = "";
+      renderVoteForm();
+    }
+  }
+
+  function renderVoteForm() {
+    const formEl = document.getElementById("vote-form");
+    formEl.innerHTML = "";
+    VOTE_CATEGORIES.forEach(cat => {
+      const card = document.createElement("div");
+      card.className = "vote-category";
+      const options = teams.map(t => {
+        const theme = THEMES.find(x => x.id === t.themeId);
+        return `
+          <label class="vote-option">
+            <input type="radio" name="vote-${cat.id}" value="${escapeHtml(t.name)}" />
+            <span class="vo-name">${escapeHtml(t.name)}</span>
+            <span class="vo-theme">${theme ? escapeHtml(theme.name) : ""}</span>
+          </label>`;
+      }).join("");
+      card.innerHTML = `
+        <h3>${escapeHtml(cat.name)}</h3>
+        <div class="vc-desc">${escapeHtml(cat.desc)}</div>
+        ${options}
+      `;
+      formEl.appendChild(card);
+    });
+
+    formEl.querySelectorAll(".vote-option input").forEach(inp => {
+      inp.addEventListener("change", () => {
+        const cat = inp.closest(".vote-category");
+        cat.querySelectorAll(".vote-option").forEach(o => o.classList.remove("selected"));
+        inp.closest(".vote-option").classList.add("selected");
+      });
+    });
+
+    const submit = document.createElement("button");
+    submit.className = "btn";
+    submit.id = "vote-submit-btn";
+    submit.textContent = "Submit my votes";
+    submit.addEventListener("click", submitVotes);
+    formEl.appendChild(submit);
+  }
+
+  async function submitVotes() {
+    const picks = [];
+    for (const cat of VOTE_CATEGORIES) {
+      const sel = document.querySelector(`input[name="vote-${cat.id}"]:checked`);
+      if (!sel) {
+        showToast(`Pick a team for "${cat.name}" first.`);
+        return;
+      }
+      picks.push({ category: cat.id, team_name: sel.value });
+    }
+    const submitBtn = document.getElementById("vote-submit-btn");
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Submitting..."; }
+    try {
+      const resp = await supaFetch("/votes", {
+        method: "POST",
+        body: JSON.stringify(picks)
+      });
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error("Vote " + resp.status + " - " + txt);
+      }
+      markVoted();
+      showToast("Votes counted. Thanks!");
+      fireConfetti();
+      document.getElementById("vote-form").innerHTML = "";
+      document.getElementById("voted-banner").style.display = "block";
+      await renderVoteResults();
+      maybeStartPolling();
+    } catch (e) {
+      console.error("Vote submit failed:", e);
+      showToast("Vote failed: " + (e.message || "unknown error"));
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Submit my votes"; }
+    }
+  }
+
+  async function renderVoteResults() {
+    const resultsEl = document.getElementById("vote-results");
+    let rows;
+    try {
+      const resp = await supaFetch("/votes?select=category,team_name");
+      if (!resp.ok) throw new Error("results " + resp.status);
+      rows = await resp.json();
+    } catch (e) {
+      console.warn("Vote results fetch failed:", e);
+      if (!resultsEl.innerHTML) {
+        resultsEl.innerHTML = `<p style="color:var(--ink-soft);">Couldn't load results right now.</p>`;
+      }
+      return;
+    }
+    resultsEl.innerHTML = "";
+    VOTE_CATEGORIES.forEach(cat => {
+      const catVotes = rows.filter(r => r.category === cat.id);
+      const tally = {};
+      catVotes.forEach(r => { tally[r.team_name] = (tally[r.team_name] || 0) + 1; });
+      const sorted = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+      const total = catVotes.length;
+      const maxCount = sorted.length ? sorted[0][1] : 0;
+
+      const card = document.createElement("div");
+      card.className = "vote-category";
+      let body = `<h3>${escapeHtml(cat.name)}</h3><div class="vc-desc">${total} vote${total === 1 ? "" : "s"} cast</div>`;
+      if (sorted.length === 0) {
+        body += `<p style="color:var(--ink-soft);font-size:14px;">No votes yet.</p>`;
+      } else {
+        sorted.forEach(([name, count]) => {
+          const pct = total ? Math.round((count / total) * 100) : 0;
+          const isLeader = count === maxCount && maxCount > 0;
+          body += `
+            <div class="vote-result-row ${isLeader ? "leader" : ""}">
+              <div class="vr-top">
+                <span class="vr-name">${escapeHtml(name)}</span>
+                <span class="vr-count">${count} (${pct}%)</span>
+              </div>
+              <div class="vote-bar-track"><div class="vote-bar-fill" style="width:${pct}%"></div></div>
+            </div>`;
+        });
+      }
+      card.innerHTML = body;
+      resultsEl.appendChild(card);
+    });
   }
 
   // ===== TEAMS UI =====
@@ -1168,12 +1429,24 @@
   renderTeams();
   updateTeamCount();
 
-  // Poll only when Teams tab is visible and the browser tab itself is in focus
+  // Poll the active tab's data while the page is focused:
+  // Teams tab -> team list; Vote tab (after voting) -> live tallies
   let pollTimer = null;
+  function activeTabName() {
+    const el = document.querySelector(".tab.active");
+    return el ? el.dataset.tab : null;
+  }
+  function pollTick() {
+    const tab = activeTabName();
+    if (tab === "teams") fetchRemoteTeams();
+    else if (tab === "vote" && hasVoted()) renderVoteResults();
+  }
   function maybeStartPolling() {
-    const teamsTabActive = document.querySelector(".tab[data-tab=teams]").classList.contains("active");
-    if (useRemote && teamsTabActive && !document.hidden) {
-      if (!pollTimer) pollTimer = setInterval(fetchRemoteTeams, POLL_INTERVAL_MS);
+    const tab = activeTabName();
+    const shouldPoll = useRemote && !document.hidden &&
+      (tab === "teams" || (tab === "vote" && hasVoted()));
+    if (shouldPoll) {
+      if (!pollTimer) pollTimer = setInterval(pollTick, POLL_INTERVAL_MS);
     } else if (pollTimer) {
       clearInterval(pollTimer);
       pollTimer = null;
