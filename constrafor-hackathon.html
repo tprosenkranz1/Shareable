@@ -557,7 +557,26 @@
     font-size: 13px;
     color: var(--brand-blue);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
   }
+  .voted-banner button {
+    background: transparent;
+    border: 1px solid var(--brand-blue);
+    color: var(--brand-blue);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: all 0.12s ease;
+  }
+  .voted-banner button:hover { background: var(--brand-blue); color: #fff; }
 
   /* Toast */
   .toast {
@@ -749,14 +768,15 @@
   <section class="panel" id="panel-vote">
     <div class="vote-intro">
       <h2>Cast your votes</h2>
-      <p>Two crowd awards, decided by the room. One vote per category. Please don't vote for your own team.</p>
+      <p>Three crowd awards, decided by the room. One vote per category. Please don't vote for your own team.</p>
     </div>
     <div id="vote-config-banner" class="config-banner" style="display:none;">
       <strong>Voting needs the shared backend</strong>
       Set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> at the top of this file's script to enable voting.
     </div>
     <div id="voted-banner" class="voted-banner" style="display:none;">
-      Thanks - your votes are in. Live tallies below.
+      <span>Thanks - your votes are in. Live tallies below.</span>
+      <button id="reset-vote-btn" type="button">Not you? Reset</button>
     </div>
     <div id="vote-form"></div>
     <div id="vote-results"></div>
@@ -1090,6 +1110,15 @@
   function markVoted() {
     try { localStorage.setItem(VOTE_STORAGE_KEY, "1"); } catch (e) {}
   }
+  function clearVoted() {
+    try { localStorage.removeItem(VOTE_STORAGE_KEY); } catch (e) {}
+  }
+
+  document.getElementById("reset-vote-btn").addEventListener("click", () => {
+    clearVoted();
+    showToast("Vote reset - you can vote again.");
+    openVotePanel();
+  });
 
   async function openVotePanel() {
     const banner = document.getElementById("vote-config-banner");
